@@ -52,12 +52,13 @@ class StreamableHttpServerWrapper
      *             To bind to any random available port provided by the OS use port number 0.
      * @param mcp_path Path for the MCP POST endpoint (default: "/mcp")
      * @param auth_token Optional auth token for Bearer authentication (empty = no auth required)
-     * @param cors_origin Optional CORS origin to allow (empty = no CORS header, use "*" for
-     * wildcard)
+     * @param response_headers Additional HTTP headers added to responses (e.g.
+     *                         "Access-Control-Allow-Origin"...)
      */
-    explicit StreamableHttpServerWrapper(McpHandler handler, std::string host = "127.0.0.1",
-                                         int port = 18080, std::string mcp_path = "/mcp",
-                                         std::string auth_token = "", std::string cors_origin = "");
+    explicit StreamableHttpServerWrapper(
+        McpHandler handler, std::string host = "127.0.0.1", int port = 18080,
+        std::string mcp_path = "/mcp", std::string auth_token = "",
+        std::unordered_map<std::string, std::string> response_headers = {});
 
     ~StreamableHttpServerWrapper();
 
@@ -145,14 +146,15 @@ class StreamableHttpServerWrapper
     void run_server();
     std::string generate_session_id();
     bool check_auth(const std::string& auth_header) const;
+    void apply_additional_response_headers(httplib::Response& res) const;
 
     McpHandler handler_;
     std::string host_;
     int requested_port_;
     std::atomic<int> bound_port_ = 0;
     std::string mcp_path_;
-    std::string auth_token_;  // Optional Bearer token for authentication
-    std::string cors_origin_; // Optional CORS origin (empty = no CORS)
+    std::string auth_token_; // Optional Bearer token for authentication
+    std::unordered_map<std::string, std::string> response_headers_;
 
     std::unique_ptr<httplib::Server> svr_;
     std::thread thread_;

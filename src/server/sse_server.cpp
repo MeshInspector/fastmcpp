@@ -89,15 +89,6 @@ SseServerWrapper::~SseServerWrapper()
     stop();
 }
 
-std::optional<int> SseServerWrapper::port() const
-{
-    const int bound_port = bound_port_.load();
-    if (bound_port > 0)
-        return bound_port;
-    else
-        return std::nullopt;
-}
-
 bool SseServerWrapper::check_auth(const std::string& auth_header) const
 {
     // If no auth token configured, allow all requests
@@ -596,10 +587,10 @@ bool SseServerWrapper::start()
     {
         if (running_)
         {
-            if (const std::optional bound_port = port())
+            if (const int bp = port(); bp > 0)
             {
                 bool received_data = false;
-                httplib::Client probe(host_.c_str(), *bound_port);
+                httplib::Client probe(host_.c_str(), bp);
                 probe.set_connection_timeout(std::chrono::seconds(2));
                 probe.set_read_timeout(std::chrono::seconds(2));
                 probe.Get(sse_path_.c_str(),

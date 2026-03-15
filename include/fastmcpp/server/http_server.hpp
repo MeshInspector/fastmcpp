@@ -42,9 +42,13 @@ class HttpServerWrapper
     /**
      * Get the port the server is bound to.
      *
-     * If the server is not bound to any port returns std::nullopt.
+     * Returns 0 before the server is bound. After start(), returns the actual port
+     * (useful when constructed with port 0 for OS-assigned ephemeral ports).
      */
-    std::optional<int> port() const;
+    int port() const
+    {
+        return bound_port_.load();
+    }
 
     const std::string& host() const
     {

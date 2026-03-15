@@ -54,12 +54,12 @@ class SseServerWrapper
      * @param sse_path Path for SSE GET endpoint (default: "/sse")
      * @param message_path Path for POST message endpoint (default: "/messages")
      * @param auth_token Optional auth token for Bearer authentication (empty = no auth required)
-     * @param response_headers Additional HTTP headers added to responses (e.g.
-     *                         "Access-Control-Allow-Origin"...)
+     * @param cors_origin Optional CORS origin (shorthand for Access-Control-Allow-Origin header)
+     * @param response_headers Additional HTTP headers added to responses
      */
     explicit SseServerWrapper(McpHandler handler, std::string host = "127.0.0.1", int port = 18080,
                               std::string sse_path = "/sse", std::string message_path = "/messages",
-                              std::string auth_token = "",
+                              std::string auth_token = "", std::string cors_origin = "",
                               std::unordered_map<std::string, std::string> response_headers = {});
 
     ~SseServerWrapper();

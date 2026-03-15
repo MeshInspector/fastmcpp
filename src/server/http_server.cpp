@@ -9,11 +9,14 @@ namespace fastmcpp::server
 {
 
 HttpServerWrapper::HttpServerWrapper(std::shared_ptr<Server> core, std::string host, int port,
-                                     std::string auth_token,
+                                     std::string auth_token, std::string cors_origin,
                                      std::unordered_map<std::string, std::string> response_headers)
     : core_(std::move(core)), host_(std::move(host)), requested_port_(port),
       auth_token_(std::move(auth_token)), response_headers_(std::move(response_headers))
 {
+    if (!cors_origin.empty() &&
+        response_headers_.find("Access-Control-Allow-Origin") == response_headers_.end())
+        response_headers_["Access-Control-Allow-Origin"] = std::move(cors_origin);
 }
 
 HttpServerWrapper::~HttpServerWrapper()

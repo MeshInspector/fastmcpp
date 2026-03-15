@@ -27,11 +27,12 @@ class HttpServerWrapper
      * @param port Port to listen on (default: 18080)
      *             To bind to any random available port provided by the OS use port number 0.
      * @param auth_token Optional auth token for Bearer authentication (empty = no auth required)
-     * @param response_headers Additional HTTP headers added to responses (e.g.
-     *                         "Access-Control-Allow-Origin"...)
+     * @param cors_origin Optional CORS origin (shorthand for Access-Control-Allow-Origin header)
+     * @param response_headers Additional HTTP headers added to responses
      */
     HttpServerWrapper(std::shared_ptr<Server> core, std::string host = "127.0.0.1",
                       int port = 18080, std::string auth_token = "",
+                      std::string cors_origin = "",
                       std::unordered_map<std::string, std::string> response_headers = {});
     ~HttpServerWrapper();
 

@@ -4,7 +4,6 @@
 #include "fastmcpp/util/json.hpp"
 
 #include <algorithm>
-#include <cassert>
 #include <cctype>
 #include <chrono>
 #include <httplib.h>
@@ -19,12 +18,15 @@ namespace fastmcpp::server
 StreamableHttpServerWrapper::StreamableHttpServerWrapper(McpHandler handler, std::string host,
                                                          int port, std::string mcp_path,
                                                          std::string auth_token,
+                                                         std::string cors_origin,
                                                          std::unordered_map<std::string, std::string> response_headers)
     : handler_(std::move(handler)), host_(std::move(host)), requested_port_(port),
       mcp_path_(std::move(mcp_path)), auth_token_(std::move(auth_token)),
       response_headers_(std::move(response_headers))
 {
-    assert(port >= 0 && "'port' is expected to be non-negative.");
+    if (!cors_origin.empty() &&
+        response_headers_.find("Access-Control-Allow-Origin") == response_headers_.end())
+        response_headers_["Access-Control-Allow-Origin"] = std::move(cors_origin);
 
     for (const auto& [name, value] : response_headers_)
     {
@@ -32,8 +34,8 @@ StreamableHttpServerWrapper::StreamableHttpServerWrapper(McpHandler handler, std
         std::transform(lower_name.begin(), lower_name.end(), lower_name.begin(),
                        [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 
-        assert(lower_name != "content-type" &&
-               "'response_headers' must not override streamable HTTP Content-Type.");
+        if (lower_name == "content-type")
+            throw std::invalid_argument("response_headers must not override '" + name + "'");
     }
 }
 

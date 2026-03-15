@@ -4,7 +4,6 @@
 #include "fastmcpp/util/json.hpp"
 
 #include <algorithm>
-#include <cassert>
 #include <cctype>
 #include <chrono>
 #include <ctime>
@@ -80,13 +79,15 @@ std::optional<TaskNotificationInfo> extract_task_notification_info(const fastmcp
 
 SseServerWrapper::SseServerWrapper(McpHandler handler, std::string host, int port,
                                    std::string sse_path, std::string message_path,
-                                   std::string auth_token,
+                                   std::string auth_token, std::string cors_origin,
                                    std::unordered_map<std::string, std::string> response_headers)
     : handler_(std::move(handler)), host_(std::move(host)), requested_port_(port),
       sse_path_(std::move(sse_path)), message_path_(std::move(message_path)),
       auth_token_(std::move(auth_token)), response_headers_(std::move(response_headers))
 {
-    assert(port >= 0 && "'port' is expected to be non-negative.");
+    if (!cors_origin.empty() &&
+        response_headers_.find("Access-Control-Allow-Origin") == response_headers_.end())
+        response_headers_["Access-Control-Allow-Origin"] = std::move(cors_origin);
 
     for (const auto& [name, value] : response_headers_)
     {
@@ -94,12 +95,9 @@ SseServerWrapper::SseServerWrapper(McpHandler handler, std::string host, int por
         std::transform(lower_name.begin(), lower_name.end(), lower_name.begin(),
                        [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 
-        assert(lower_name != "content-type" &&
-               "'response_headers' must not override SSE Content-Type.");
-        assert(lower_name != "connection" &&
-               "'response_headers' must not override SSE Connection.");
-        assert(lower_name != "cache-control" &&
-               "'response_headers' must not override SSE Cache-Control.");
+        if (lower_name == "content-type" || lower_name == "connection" ||
+            lower_name == "cache-control")
+            throw std::invalid_argument("response_headers must not override '" + name + "'");
     }
 }
 

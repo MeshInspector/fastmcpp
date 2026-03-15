@@ -151,15 +151,14 @@ int main()
         std::cout << "  [PASS] HTTP server does not set CORS by default\n";
     }
 
-    // Test 5: HTTP server should set CORS header when explicitly configured
+    // Test 5: HTTP server should set CORS header when using cors_origin convenience param
     {
-        std::cout << "Test: HTTP server sets CORS header when configured...\n";
+        std::cout << "Test: HTTP server sets CORS header via cors_origin param...\n";
 
         auto srv = std::make_shared<Server>();
         srv->route("test", [](const Json&) { return Json{{"result", "ok"}}; });
 
-        HttpServerWrapper http_server(srv, "127.0.0.1", 18603, "",
-                                      {{"Access-Control-Allow-Origin", "https://example.com"}});
+        HttpServerWrapper http_server(srv, "127.0.0.1", 18603, "", "https://example.com");
         if (!http_server.start())
         {
             std::cerr << "Failed to start HTTP server\n";
@@ -231,8 +230,7 @@ int main()
         auto srv = std::make_shared<Server>();
         srv->route("test", [](const Json&) { return Json{{"result", "ok"}}; });
 
-        HttpServerWrapper http_server(srv, "127.0.0.1", 18605, "",
-                                      {{"Access-Control-Allow-Origin", "https://example.com"}});
+        HttpServerWrapper http_server(srv, "127.0.0.1", 18605, "", "https://example.com");
         if (!http_server.start())
         {
             std::cerr << "Failed to start HTTP server with CORS config\n";
@@ -284,7 +282,7 @@ int main()
         { return Json{{"jsonrpc", "2.0"}, {"id", req["id"]}, {"result", {}}}; };
 
         SseServerWrapper sse_server(handler, "127.0.0.1", 18605, "/sse", "/messages", "",
-                                    {{"Access-Control-Allow-Origin", "https://example.com"}});
+                                    "https://example.com");
         if (!sse_server.start())
         {
             std::cerr << "Failed to start SSE server with CORS config\n";
@@ -326,6 +324,129 @@ int main()
 
         sse_server.stop();
         std::cout << "  [PASS] SSE message endpoint handles CORS preflight\n";
+    }
+
+    // Test 9: HTTP server CORS via response_headers map (new API)
+    {
+        std::cout << "Test: HTTP server sets CORS header via response_headers map...\n";
+
+        auto srv = std::make_shared<Server>();
+        srv->route("test", [](const Json&) { return Json{{"result", "ok"}}; });
+
+        HttpServerWrapper http_server(srv, "127.0.0.1", 18606, "", "",
+                                      {{"Access-Control-Allow-Origin", "*"},
+                                       {"X-Custom-Header", "custom-value"}});
+        if (!http_server.start())
+        {
+            std::cerr << "Failed to start HTTP server\n";
+            return 1;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        httplib::Client client("127.0.0.1", 18606);
+        auto res = client.Post("/test", R"({"x":1})", "application/json");
+
+        if (!res || res->status != 200)
+        {
+            std::cerr << "  [FAIL] Request failed\n";
+            http_server.stop();
+            return 1;
+        }
+
+        auto cors_it = res->headers.find("Access-Control-Allow-Origin");
+        if (cors_it == res->headers.end() || cors_it->second != "*")
+        {
+            std::cerr << "  [FAIL] CORS header missing or incorrect\n";
+            http_server.stop();
+            return 1;
+        }
+
+        auto custom_it = res->headers.find("X-Custom-Header");
+        if (custom_it == res->headers.end() || custom_it->second != "custom-value")
+        {
+            std::cerr << "  [FAIL] Custom header missing or incorrect\n";
+            http_server.stop();
+            return 1;
+        }
+
+        http_server.stop();
+        std::cout << "  [PASS] HTTP server sets headers via response_headers map\n";
+    }
+
+    // Test 10: SSE server rejects protected headers (Content-Type)
+    {
+        std::cout << "Test: SSE server rejects protected Content-Type header...\n";
+
+        auto handler = [](const Json& req) -> Json
+        { return Json{{"jsonrpc", "2.0"}, {"id", req["id"]}, {"result", {}}}; };
+
+        bool threw = false;
+        try
+        {
+            SseServerWrapper sse_server(handler, "127.0.0.1", 18607, "/sse", "/messages", "", "",
+                                        {{"Content-Type", "text/plain"}});
+        }
+        catch (const std::invalid_argument& e)
+        {
+            threw = true;
+            std::string msg = e.what();
+            if (msg.find("Content-Type") == std::string::npos)
+            {
+                std::cerr << "  [FAIL] Exception message should mention Content-Type: " << msg
+                          << "\n";
+                return 1;
+            }
+        }
+
+        if (!threw)
+        {
+            std::cerr << "  [FAIL] Should have thrown std::invalid_argument\n";
+            return 1;
+        }
+
+        std::cout << "  [PASS] SSE server rejects protected Content-Type header\n";
+    }
+
+    // Test 11: cors_origin is overridden when response_headers also sets it
+    {
+        std::cout << "Test: response_headers takes priority over cors_origin...\n";
+
+        auto srv = std::make_shared<Server>();
+        srv->route("test", [](const Json&) { return Json{{"result", "ok"}}; });
+
+        // cors_origin="*" but response_headers overrides with specific origin
+        HttpServerWrapper http_server(srv, "127.0.0.1", 18608, "", "*",
+                                      {{"Access-Control-Allow-Origin", "https://specific.com"}});
+        if (!http_server.start())
+        {
+            std::cerr << "Failed to start HTTP server\n";
+            return 1;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        httplib::Client client("127.0.0.1", 18608);
+        auto res = client.Post("/test", R"({"x":1})", "application/json");
+
+        if (!res || res->status != 200)
+        {
+            std::cerr << "  [FAIL] Request failed\n";
+            http_server.stop();
+            return 1;
+        }
+
+        auto cors_it = res->headers.find("Access-Control-Allow-Origin");
+        if (cors_it == res->headers.end() || cors_it->second != "https://specific.com")
+        {
+            std::cerr << "  [FAIL] response_headers should take priority, got: "
+                      << (cors_it != res->headers.end() ? cors_it->second : "missing") << "\n";
+            http_server.stop();
+            return 1;
+        }
+
+        http_server.stop();
+        std::cout << "  [PASS] response_headers takes priority over cors_origin\n";
     }
 
     std::cout << "\n[OK] All HTTP/SSE auth and CORS security tests passed!\n";

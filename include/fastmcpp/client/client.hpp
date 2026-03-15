@@ -19,11 +19,16 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <set>
 #include <thread>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace fastmcpp::client
 {
+
+/// Maximum number of pages to auto-fetch in convenience list methods (parity with Python 85c71fa8)
+static constexpr int kAutoPaginationMaxPages = 250;
 
 class ToolTask;
 class PromptTask;
@@ -236,10 +241,34 @@ class Client
         return parsed;
     }
 
-    /// List all available tools (convenience - returns just the tools vector)
-    std::vector<ToolInfo> list_tools()
+    /// List all available tools with auto-pagination (convenience)
+    /// @param max_pages Maximum pages to fetch (default 250, prevents unbounded fetches)
+    std::vector<ToolInfo> list_tools(int max_pages = kAutoPaginationMaxPages)
     {
-        return list_tools_mcp().tools;
+        std::vector<ToolInfo> all;
+        std::optional<std::string> cursor;
+        std::unordered_set<std::string> seen_cursors;
+        for (int page = 0; page < max_pages; ++page)
+        {
+            fastmcpp::Json payload = fastmcpp::Json::object();
+            if (cursor)
+                payload["cursor"] = *cursor;
+            auto response = call("tools/list", payload);
+            auto parsed = parse_list_tools_result(response);
+            for (auto& t : parsed.tools)
+            {
+                if (t.outputSchema)
+                    tool_output_schemas_[t.name] = *t.outputSchema;
+                all.push_back(std::move(t));
+            }
+            if (!parsed.nextCursor)
+                break;
+            if (seen_cursors.count(*parsed.nextCursor))
+                break; // cycle detection
+            seen_cursors.insert(*parsed.nextCursor);
+            cursor = parsed.nextCursor;
+        }
+        return all;
     }
 
     /// Call a tool and return the full MCP result
@@ -436,10 +465,30 @@ class Client
         return parse_list_resources_result(response);
     }
 
-    /// List all available resources (convenience)
-    std::vector<ResourceInfo> list_resources()
+    /// List all available resources with auto-pagination (convenience)
+    /// @param max_pages Maximum pages to fetch (default 250, prevents unbounded fetches)
+    std::vector<ResourceInfo> list_resources(int max_pages = kAutoPaginationMaxPages)
     {
-        return list_resources_mcp().resources;
+        std::vector<ResourceInfo> all;
+        std::optional<std::string> cursor;
+        std::unordered_set<std::string> seen_cursors;
+        for (int page = 0; page < max_pages; ++page)
+        {
+            fastmcpp::Json payload = fastmcpp::Json::object();
+            if (cursor)
+                payload["cursor"] = *cursor;
+            auto response = call("resources/list", payload);
+            auto parsed = parse_list_resources_result(response);
+            all.insert(all.end(), std::make_move_iterator(parsed.resources.begin()),
+                       std::make_move_iterator(parsed.resources.end()));
+            if (!parsed.nextCursor)
+                break;
+            if (seen_cursors.count(*parsed.nextCursor))
+                break;
+            seen_cursors.insert(*parsed.nextCursor);
+            cursor = parsed.nextCursor;
+        }
+        return all;
     }
 
     /// List resource templates
@@ -492,10 +541,30 @@ class Client
         return parse_list_prompts_result(response);
     }
 
-    /// List all available prompts (convenience)
-    std::vector<PromptInfo> list_prompts()
+    /// List all available prompts with auto-pagination (convenience)
+    /// @param max_pages Maximum pages to fetch (default 250, prevents unbounded fetches)
+    std::vector<PromptInfo> list_prompts(int max_pages = kAutoPaginationMaxPages)
     {
-        return list_prompts_mcp().prompts;
+        std::vector<PromptInfo> all;
+        std::optional<std::string> cursor;
+        std::unordered_set<std::string> seen_cursors;
+        for (int page = 0; page < max_pages; ++page)
+        {
+            fastmcpp::Json payload = fastmcpp::Json::object();
+            if (cursor)
+                payload["cursor"] = *cursor;
+            auto response = call("prompts/list", payload);
+            auto parsed = parse_list_prompts_result(response);
+            all.insert(all.end(), std::make_move_iterator(parsed.prompts.begin()),
+                       std::make_move_iterator(parsed.prompts.end()));
+            if (!parsed.nextCursor)
+                break;
+            if (seen_cursors.count(*parsed.nextCursor))
+                break;
+            seen_cursors.insert(*parsed.nextCursor);
+            cursor = parsed.nextCursor;
+        }
+        return all;
     }
 
     /// Get a prompt by name with optional arguments

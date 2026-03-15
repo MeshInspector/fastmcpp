@@ -189,6 +189,15 @@ class Tool
         sequential_ = seq;
         return *this;
     }
+    const std::optional<fastmcpp::Json>& annotations() const
+    {
+        return annotations_;
+    }
+    Tool& set_annotations(fastmcpp::Json annotations)
+    {
+        annotations_ = std::move(annotations);
+        return *this;
+    }
 
   private:
     static std::string format_timeout_seconds(std::chrono::milliseconds timeout)
@@ -250,6 +259,7 @@ class Tool
     std::optional<std::chrono::milliseconds> timeout_;
     bool hidden_{false};
     bool sequential_{false};
+    std::optional<fastmcpp::Json> annotations_;
     std::optional<fastmcpp::AppConfig> app_;
     std::optional<std::string> version_;
 };

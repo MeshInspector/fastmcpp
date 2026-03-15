@@ -471,6 +471,7 @@ std::vector<client::ToolInfo> FastMCP::list_all_tools_info() const
             return;
         client::ToolInfo info;
         info.name = name;
+        info.version = tool.version();
         info.inputSchema = maybe_dereference_schema(tool.input_schema());
         info.title = tool.title();
         info.description = tool.description();

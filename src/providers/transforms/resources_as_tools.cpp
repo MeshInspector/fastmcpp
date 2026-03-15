@@ -5,6 +5,9 @@
 namespace fastmcpp::providers::transforms
 {
 
+// Default annotations for ResourcesAsTools-generated tools (parity with Python fastmcp e1338e06)
+static const Json kReadOnlyAnnotations = Json{{"readOnlyHint", true}};
+
 tools::Tool ResourcesAsTools::make_list_resources_tool() const
 {
     auto provider = provider_;
@@ -35,10 +38,12 @@ tools::Tool ResourcesAsTools::make_list_resources_tool() const
         return Json{{"type", "text"}, {"text", result.dump(2)}};
     };
 
-    return tools::Tool(
+    tools::Tool tool(
         "list_resources", Json::object(), Json(), fn, std::nullopt,
         std::optional<std::string>("List available resources and resource templates"),
         std::nullopt);
+    tool.set_annotations(kReadOnlyAnnotations);
+    return tool;
 }
 
 tools::Tool ResourcesAsTools::make_read_resource_tool() const
@@ -66,8 +71,10 @@ tools::Tool ResourcesAsTools::make_read_resource_tool() const
                    {"properties", Json{{"uri", Json{{"type", "string"}}}}},
                    {"required", Json::array({"uri"})}};
 
-    return tools::Tool("read_resource", schema, Json(), fn, std::nullopt,
-                       std::optional<std::string>("Read a resource by URI"), std::nullopt);
+    tools::Tool tool("read_resource", schema, Json(), fn, std::nullopt,
+                     std::optional<std::string>("Read a resource by URI"), std::nullopt);
+    tool.set_annotations(kReadOnlyAnnotations);
+    return tool;
 }
 
 std::vector<tools::Tool> ResourcesAsTools::list_tools(const ListToolsNext& call_next) const

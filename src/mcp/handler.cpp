@@ -193,6 +193,13 @@ static std::optional<fastmcpp::Json> extract_request_meta(const fastmcpp::Json& 
     return std::nullopt;
 }
 
+// Check if an output schema indicates the result was wrapped (non-object → {"result": ...})
+static bool schema_has_wrap_result(const fastmcpp::Json& schema)
+{
+    return !schema.is_null() && schema.is_object() && schema.contains("x-fastmcp-wrap-result") &&
+           schema["x-fastmcp-wrap-result"].get<bool>();
+}
+
 static fastmcpp::Json normalize_output_schema_for_mcp(const fastmcpp::Json& schema)
 {
     if (schema.is_null())
@@ -218,7 +225,9 @@ static fastmcpp::Json make_tool_entry(
     const fastmcpp::Json& output_schema = fastmcpp::Json(),
     fastmcpp::TaskSupport task_support = fastmcpp::TaskSupport::Forbidden, bool sequential = false,
     const std::optional<fastmcpp::AppConfig>& app = std::nullopt,
-    const std::optional<fastmcpp::Json>& meta = std::nullopt)
+    const std::optional<fastmcpp::Json>& meta = std::nullopt,
+    const std::optional<std::string>& version = std::nullopt,
+    const std::optional<fastmcpp::Json>& annotations = std::nullopt)
 {
     fastmcpp::Json entry = {
         {"name", name},
@@ -227,6 +236,8 @@ static fastmcpp::Json make_tool_entry(
         entry["title"] = *title;
     if (!description.empty())
         entry["description"] = description;
+    if (version)
+        entry["version"] = *version;
     // Schema may be empty
     if (!schema.is_null() && !schema.empty())
         entry["inputSchema"] = schema;
@@ -258,6 +269,8 @@ static fastmcpp::Json make_tool_entry(
         }
         entry["icons"] = icons_json;
     }
+    if (annotations && !annotations->is_null() && !annotations->empty())
+        entry["annotations"] = *annotations;
     attach_meta_ui(entry, app, meta);
     entry["fastmcp"] = make_fastmcp_meta();
     return entry;
@@ -786,8 +799,10 @@ class TaskRegistry
 
 // Helper: convert a tool invocation JSON result into an MCP CallToolResult payload.
 // For tools that declare an outputSchema, include structuredContent for parity with Python fastmcp.
+// When wrap_result is true, adds _meta: {"fastmcp": {"wrap_result": true}} (parity with 139d2d8f).
 fastmcpp::Json build_fastmcp_tool_result(const fastmcpp::Json& result,
-                                         bool include_structured_content = false)
+                                         bool include_structured_content = false,
+                                         bool wrap_result = false)
 {
     // If the tool already returned a CallToolResult-like object, preserve it (including isError,
     // structuredContent, and _meta).
@@ -804,6 +819,16 @@ fastmcpp::Json build_fastmcp_tool_result(const fastmcpp::Json& result,
         if (payload.contains("structuredContent") && !payload["structuredContent"].is_object())
             payload["structuredContent"] =
                 fastmcpp::Json{{"result", std::move(payload["structuredContent"])}};
+        // Merge wrap_result into existing _meta
+        if (wrap_result)
+        {
+            fastmcpp::Json meta =
+                payload.contains("_meta") && payload["_meta"].is_object()
+                    ? payload["_meta"]
+                    : fastmcpp::Json::object();
+            meta["fastmcp"] = fastmcpp::Json{{"wrap_result", true}};
+            payload["_meta"] = std::move(meta);
+        }
         return payload;
     }
 
@@ -825,6 +850,8 @@ fastmcpp::Json build_fastmcp_tool_result(const fastmcpp::Json& result,
         else
             payload["structuredContent"] = fastmcpp::Json{{"result", result}};
     }
+    if (wrap_result)
+        payload["_meta"] = fastmcpp::Json{{"fastmcp", fastmcpp::Json{{"wrap_result", true}}}};
     return payload;
 }
 
@@ -971,7 +998,8 @@ make_mcp_handler(const std::string& server_name, const std::string& version,
 
                     tools_array.push_back(make_tool_entry(
                         name, desc, schema, tool.title(), tool.icons(), tool.output_schema(),
-                        tool.task_support(), tool.sequential(), tool.app()));
+                        tool.task_support(), tool.sequential(), tool.app(), std::nullopt,
+                        tool.version(), tool.annotations()));
                 }
 
                 return fastmcpp::Json{{"jsonrpc", "2.0"},
@@ -993,10 +1021,11 @@ make_mcp_handler(const std::string& server_name, const std::string& version,
                 {
                     const auto& tool = tools.get(name);
                     bool has_output_schema = !tool.output_schema().is_null();
+                    bool wrap_result = schema_has_wrap_result(tool.output_schema());
 
                     auto result = tools.invoke(name, args);
                     fastmcpp::Json result_payload =
-                        build_fastmcp_tool_result(result, has_output_schema);
+                        build_fastmcp_tool_result(result, has_output_schema, wrap_result);
                     return fastmcpp::Json{
                         {"jsonrpc", "2.0"}, {"id", id}, {"result", result_payload}};
                 }
@@ -1365,11 +1394,12 @@ make_mcp_handler(const std::string& server_name, const std::string& version,
                 {
                     const auto& tool = tools.get(name);
                     bool has_output_schema = !tool.output_schema().is_null();
+                    bool wrap_result = schema_has_wrap_result(tool.output_schema());
 
                     // Use tools.invoke() directly - this is why we capture tools
                     auto result = tools.invoke(name, args);
                     fastmcpp::Json result_payload =
-                        build_fastmcp_tool_result(result, has_output_schema);
+                        build_fastmcp_tool_result(result, has_output_schema, wrap_result);
                     return fastmcpp::Json{
                         {"jsonrpc", "2.0"}, {"id", id}, {"result", result_payload}};
                 }
@@ -1545,10 +1575,11 @@ make_mcp_handler(const std::string& server_name, const std::string& version,
                 {
                     const auto& tool = tools.get(name);
                     bool has_output_schema = !tool.output_schema().is_null();
+                    bool wrap_result = schema_has_wrap_result(tool.output_schema());
 
                     auto result = tools.invoke(name, args);
                     fastmcpp::Json result_payload =
-                        build_fastmcp_tool_result(result, has_output_schema);
+                        build_fastmcp_tool_result(result, has_output_schema, wrap_result);
                     return fastmcpp::Json{
                         {"jsonrpc", "2.0"}, {"id", id}, {"result", result_payload}};
                 }
@@ -1567,6 +1598,8 @@ make_mcp_handler(const std::string& server_name, const std::string& version,
                 for (const auto& res : resources.list())
                 {
                     fastmcpp::Json res_json = {{"uri", res.uri}, {"name", res.name}};
+                    if (res.version)
+                        res_json["version"] = *res.version;
                     if (res.description)
                         res_json["description"] = *res.description;
                     if (res.mime_type)
@@ -1708,6 +1741,8 @@ make_mcp_handler(const std::string& server_name, const std::string& version,
                 for (const auto& prompt : prompts.list())
                 {
                     fastmcpp::Json prompt_json = {{"name", prompt.name}};
+                    if (prompt.version)
+                        prompt_json["version"] = *prompt.version;
                     if (prompt.description)
                         prompt_json["description"] = *prompt.description;
                     if (!prompt.arguments.empty())
@@ -1857,6 +1892,8 @@ make_mcp_handler(const FastMCP& app, SessionAccessor session_accessor)
                 {
                     fastmcpp::Json tool_json = {{"name", tool_info.name},
                                                 {"inputSchema", tool_info.inputSchema}};
+                    if (tool_info.version)
+                        tool_json["version"] = *tool_info.version;
                     if (tool_info.title)
                         tool_json["title"] = *tool_info.title;
                     if (tool_info.description)
@@ -1915,12 +1952,15 @@ make_mcp_handler(const FastMCP& app, SessionAccessor session_accessor)
                     }
 
                     bool has_output_schema = false;
+                    bool wrap_result = false;
                     for (const auto& tool_info : app.list_all_tools_info())
                     {
                         if (tool_info.name != name)
                             continue;
                         has_output_schema =
                             tool_info.outputSchema && !tool_info.outputSchema->is_null();
+                        if (has_output_schema)
+                            wrap_result = schema_has_wrap_result(*tool_info.outputSchema);
                         break;
                     }
 
@@ -1959,10 +1999,12 @@ make_mcp_handler(const FastMCP& app, SessionAccessor session_accessor)
 
                         tasks->enqueue_task(
                             task_id,
-                            [&app, name, args, has_output_schema]() -> fastmcpp::Json
+                            [&app, name, args, has_output_schema,
+                             wrap_result]() -> fastmcpp::Json
                             {
                                 auto invoke_result = app.invoke_tool(name, args, false);
-                                return build_fastmcp_tool_result(invoke_result, has_output_schema);
+                                return build_fastmcp_tool_result(invoke_result, has_output_schema,
+                                                                 wrap_result);
                             });
 
                         fastmcpp::Json task_meta = {
@@ -1991,7 +2033,7 @@ make_mcp_handler(const FastMCP& app, SessionAccessor session_accessor)
                     // Synchronous execution (no task metadata)
                     auto invoke_result = app.invoke_tool(name, args);
                     fastmcpp::Json result_payload =
-                        build_fastmcp_tool_result(invoke_result, has_output_schema);
+                        build_fastmcp_tool_result(invoke_result, has_output_schema, wrap_result);
                     return fastmcpp::Json{
                         {"jsonrpc", "2.0"},
                         {"id", id},
@@ -2125,6 +2167,8 @@ make_mcp_handler(const FastMCP& app, SessionAccessor session_accessor)
                 for (const auto& res : app.list_all_resources())
                 {
                     fastmcpp::Json res_json = {{"uri", res.uri}, {"name", res.name}};
+                    if (res.version)
+                        res_json["version"] = *res.version;
                     if (res.description)
                         res_json["description"] = *res.description;
                     if (res.mime_type)
@@ -2363,6 +2407,8 @@ make_mcp_handler(const FastMCP& app, SessionAccessor session_accessor)
                     fastmcpp::Json prompt_json = {{"name", name}};
                     if (prompt)
                     {
+                        if (prompt->version)
+                            prompt_json["version"] = *prompt->version;
                         if (prompt->description)
                             prompt_json["description"] = *prompt->description;
                         if (!prompt->arguments.empty())
@@ -2651,6 +2697,8 @@ std::function<fastmcpp::Json(const fastmcpp::Json&)> make_mcp_handler(const Prox
                 for (const auto& res : app.list_all_resources())
                 {
                     fastmcpp::Json res_json = {{"uri", res.uri}, {"name", res.name}};
+                    if (res.version)
+                        res_json["version"] = *res.version;
                     if (res.description)
                         res_json["description"] = *res.description;
                     if (res.mimeType)
@@ -2788,6 +2836,8 @@ std::function<fastmcpp::Json(const fastmcpp::Json&)> make_mcp_handler(const Prox
                 for (const auto& prompt : app.list_all_prompts())
                 {
                     fastmcpp::Json prompt_json = {{"name", prompt.name}};
+                    if (prompt.version)
+                        prompt_json["version"] = *prompt.version;
                     if (prompt.description)
                         prompt_json["description"] = *prompt.description;
                     if (prompt.arguments)
@@ -3018,6 +3068,8 @@ make_mcp_handler_with_sampling(const FastMCP& app, SessionAccessor session_acces
                 {
                     fastmcpp::Json tool_json = {{"name", tool_info.name},
                                                 {"inputSchema", tool_info.inputSchema}};
+                    if (tool_info.version)
+                        tool_json["version"] = *tool_info.version;
                     if (tool_info.title)
                         tool_json["title"] = *tool_info.title;
                     if (tool_info.description)
@@ -3113,6 +3165,8 @@ make_mcp_handler_with_sampling(const FastMCP& app, SessionAccessor session_acces
                 for (const auto& res : app.list_all_resources())
                 {
                     fastmcpp::Json res_json = {{"uri", res.uri}, {"name", res.name}};
+                    if (res.version)
+                        res_json["version"] = *res.version;
                     if (res.description)
                         res_json["description"] = *res.description;
                     if (res.mime_type)
@@ -3257,6 +3311,8 @@ make_mcp_handler_with_sampling(const FastMCP& app, SessionAccessor session_acces
                 for (const auto& [name, prompt] : app.list_all_prompts())
                 {
                     fastmcpp::Json prompt_json = {{"name", name}};
+                    if (prompt->version)
+                        prompt_json["version"] = *prompt->version;
                     if (prompt->description)
                         prompt_json["description"] = *prompt->description;
                     if (!prompt->arguments.empty())

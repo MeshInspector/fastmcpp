@@ -56,7 +56,8 @@ using ContentBlock = std::variant<TextContent, ImageContent, EmbeddedResourceCon
 struct ToolInfo
 {
     std::string name;
-    std::optional<std::string> title; ///< Human-readable title
+    std::optional<std::string> version;               ///< Component version metadata
+    std::optional<std::string> title;                 ///< Human-readable title
     std::optional<std::string> description;
     fastmcpp::Json inputSchema;                       ///< JSON Schema for tool input
     std::optional<fastmcpp::Json> outputSchema;       ///< JSON Schema for structured output
@@ -125,7 +126,8 @@ struct ResourceInfo
 {
     std::string uri;
     std::string name;
-    std::optional<std::string> title; ///< Human-readable title
+    std::optional<std::string> version;               ///< Component version metadata
+    std::optional<std::string> title;                 ///< Human-readable title
     std::optional<std::string> description;
     std::optional<std::string> mimeType;
     std::optional<fastmcpp::Json> annotations;
@@ -211,7 +213,8 @@ struct PromptArgument
 struct PromptInfo
 {
     std::string name;
-    std::optional<std::string> title; ///< Human-readable title
+    std::optional<std::string> version;               ///< Component version metadata
+    std::optional<std::string> title;                 ///< Human-readable title
     std::optional<std::string> description;
     std::optional<std::vector<PromptArgument>> arguments;
     std::optional<std::vector<fastmcpp::Icon>> icons; ///< Icons for UI display
@@ -351,6 +354,8 @@ inline void to_json(fastmcpp::Json& j, const ToolInfo& t)
 inline void from_json(const fastmcpp::Json& j, ToolInfo& t)
 {
     t.name = j.at("name").get<std::string>();
+    if (j.contains("version"))
+        t.version = j["version"].get<std::string>();
     if (j.contains("title"))
         t.title = j["title"].get<std::string>();
     if (j.contains("description"))
@@ -373,6 +378,8 @@ inline void from_json(const fastmcpp::Json& j, ToolInfo& t)
 inline void to_json(fastmcpp::Json& j, const ResourceInfo& r)
 {
     j = fastmcpp::Json{{"uri", r.uri}, {"name", r.name}};
+    if (r.version)
+        j["version"] = *r.version;
     if (r.title)
         j["title"] = *r.title;
     if (r.description)
@@ -394,6 +401,8 @@ inline void from_json(const fastmcpp::Json& j, ResourceInfo& r)
 {
     r.uri = j.at("uri").get<std::string>();
     r.name = j.at("name").get<std::string>();
+    if (j.contains("version"))
+        r.version = j["version"].get<std::string>();
     if (j.contains("title"))
         r.title = j["title"].get<std::string>();
     if (j.contains("description"))
@@ -485,6 +494,8 @@ inline void to_json(fastmcpp::Json& j, const PromptInfo& p)
 inline void from_json(const fastmcpp::Json& j, PromptInfo& p)
 {
     p.name = j.at("name").get<std::string>();
+    if (j.contains("version"))
+        p.version = j["version"].get<std::string>();
     if (j.contains("title"))
         p.title = j["title"].get<std::string>();
     if (j.contains("description"))

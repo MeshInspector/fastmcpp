@@ -21,6 +21,12 @@ Settings Settings::from_env()
     s.log_level = lvl;
     auto rich = getenv_str("FASTMCPP_ENABLE_RICH_TRACEBACKS", "0");
     s.enable_rich_tracebacks = (rich == "1" || rich == "true" || rich == "TRUE");
+    auto client_log = getenv_str("FASTMCPP_CLIENT_LOG_LEVEL", "");
+    if (!client_log.empty())
+        s.client_log_level = client_log;
+    auto transport = getenv_str("FASTMCPP_TRANSPORT", "");
+    if (!transport.empty())
+        s.transport = transport;
     return s;
 }
 
@@ -31,6 +37,10 @@ Settings Settings::from_json(const Json& j)
         s.log_level = j.at("log_level").get<std::string>();
     if (j.contains("enable_rich_tracebacks"))
         s.enable_rich_tracebacks = j.at("enable_rich_tracebacks").get<bool>();
+    if (j.contains("client_log_level"))
+        s.client_log_level = j.at("client_log_level").get<std::string>();
+    if (j.contains("transport"))
+        s.transport = j.at("transport").get<std::string>();
     return s;
 }
 

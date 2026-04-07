@@ -76,7 +76,9 @@ class BaseSearchTransform : public CatalogTransform
         SearchResultSerializer search_result_serializer;
     };
 
-    explicit BaseSearchTransform(Options opts = {})
+    static Options make_default_options() {return {};}
+
+    explicit BaseSearchTransform(Options opts = make_default_options())
         : max_results_(opts.max_results),
           always_visible_(opts.always_visible.begin(), opts.always_visible.end()),
           search_tool_name_(std::move(opts.search_tool_name)),

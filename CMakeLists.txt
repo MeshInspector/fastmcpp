@@ -71,31 +71,8 @@ if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
 endif()
 
-# nlohmann_json dependency - use existing target if available (e.g., from vcpkg)
-if(NOT TARGET nlohmann_json::nlohmann_json)
-    include(FetchContent)
-    FetchContent_Declare(
-      nlohmann_json
-      GIT_REPOSITORY https://github.com/nlohmann/json.git
-      GIT_TAG v3.11.3
-    )
-    FetchContent_MakeAvailable(nlohmann_json)
-endif()
-
-target_link_libraries(fastmcpp_core PUBLIC nlohmann_json::nlohmann_json)
-
-# Header-only HTTP library (cpp-httplib)
-include(FetchContent)
-FetchContent_Declare(
-  cpp_httplib
-  GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
-  GIT_TAG v0.15.3
-)
-FetchContent_GetProperties(cpp_httplib)
-if(NOT cpp_httplib_POPULATED)
-  FetchContent_Populate(cpp_httplib)
-endif()
-target_include_directories(fastmcpp_core PUBLIC ${cpp_httplib_SOURCE_DIR})
+target_include_directories(fastmcpp_core PUBLIC ../nlohmann-json/include) # Ugh.
+target_include_directories(fastmcpp_core PUBLIC ../cpp-httplib) # Ugh again.
 
 # Optional: libcurl for POST streaming and sampling handlers (modular)
 if(FASTMCPP_ENABLE_POST_STREAMING OR FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS)
@@ -228,9 +205,9 @@ if(FASTMCPP_BUILD_TESTS)
   target_link_libraries(fastmcpp_cli_generated_e2e PRIVATE fastmcpp_core)
   add_test(NAME fastmcpp_cli_generated_e2e COMMAND fastmcpp_cli_generated_e2e)
 
-  add_executable(fastmcpp_http_integration tests/server/http_integration.cpp)   
-  target_link_libraries(fastmcpp_http_integration PRIVATE fastmcpp_core)        
-  add_test(NAME fastmcpp_http_integration COMMAND fastmcpp_http_integration)    
+  add_executable(fastmcpp_http_integration tests/server/http_integration.cpp)
+  target_link_libraries(fastmcpp_http_integration PRIVATE fastmcpp_core)
+  add_test(NAME fastmcpp_http_integration COMMAND fastmcpp_http_integration)
 
   add_executable(fastmcpp_json_schema tests/schema/json_schema.cpp)
   target_link_libraries(fastmcpp_json_schema PRIVATE fastmcpp_core)
@@ -431,8 +408,8 @@ if(FASTMCPP_BUILD_TESTS)
   add_test(NAME fastmcpp_client_api_icons COMMAND fastmcpp_client_api_icons)
 
   add_executable(fastmcpp_client_tasks tests/client/tasks.cpp)
-  target_link_libraries(fastmcpp_client_tasks PRIVATE fastmcpp_core)      
-  add_test(NAME fastmcpp_client_tasks COMMAND fastmcpp_client_tasks)      
+  target_link_libraries(fastmcpp_client_tasks PRIVATE fastmcpp_core)
+  add_test(NAME fastmcpp_client_tasks COMMAND fastmcpp_client_tasks)
 
   add_executable(fastmcpp_client_sampling_handlers tests/client/sampling_handlers.cpp)
   target_link_libraries(fastmcpp_client_sampling_handlers PRIVATE fastmcpp_core)

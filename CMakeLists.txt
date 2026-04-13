@@ -148,10 +148,10 @@ target_sources(fastmcpp_core PRIVATE src/internal/process.cpp)
 find_package(Threads REQUIRED)
 target_link_libraries(fastmcpp_core PRIVATE Threads::Threads)
 
-add_executable(fastmcpp src/cli/main.cpp)
-target_link_libraries(fastmcpp PRIVATE fastmcpp_core)
-
 if(FASTMCPP_BUILD_TESTS)
+  add_executable(fastmcpp src/cli/main.cpp)
+  target_link_libraries(fastmcpp PRIVATE fastmcpp_core)
+
   enable_testing()
   add_executable(fastmcp_smoke tests/smoke.cpp)
   target_link_libraries(fastmcp_smoke PRIVATE fastmcpp_core)

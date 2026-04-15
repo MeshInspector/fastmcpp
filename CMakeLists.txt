@@ -15,6 +15,8 @@ option(FASTMCPP_ENABLE_POST_STREAMING "Enable POST streaming via libcurl (option
 option(FASTMCPP_FETCH_CURL "Fetch and build libcurl statically for POST streaming" ON)
 option(FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS "Enable built-in OpenAI/Anthropic sampling handlers (requires libcurl)" OFF)
 
+file(GLOB_RECURSE HEADERS "include/*.hpp")
+
 add_library(fastmcpp_core STATIC
     src/types.cpp
     src/util/schema_build.cpp
@@ -57,6 +59,7 @@ add_library(fastmcpp_core STATIC
     src/util/json_schema.cpp
     src/util/json_schema_type.cpp
     src/settings.cpp
+    ${HEADERS}
 )
 target_include_directories(fastmcpp_core PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -68,8 +71,28 @@ if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
 endif()
 
-target_include_directories(fastmcpp_core PUBLIC ../nlohmann-json/include) # Ugh.
-target_include_directories(fastmcpp_core PUBLIC ../cpp-httplib) # Ugh again.
+find_package(httplib REQUIRED)
+target_link_libraries(fastmcpp_core PUBLIC httplib::httplib)
+
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(fastmcpp_core PUBLIC nlohmann_json::nlohmann_json)
+
+
+include(GNUInstallDirs)
+
+install(
+  TARGETS fastmcpp_core
+  EXPORT fastmcpp_core
+  FILE_SET HEADERS
+)
+
+install(
+  EXPORT fastmcpp_core
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/fastmcpp
+  NAMESPACE fastmcpp::
+)
+
+install(FILES src/fastmcppConfig.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/fastmcpp)
 
 # Optional: libcurl for POST streaming and sampling handlers (modular)
 if(FASTMCPP_ENABLE_POST_STREAMING OR FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS)

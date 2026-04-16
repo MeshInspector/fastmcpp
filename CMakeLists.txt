@@ -83,7 +83,6 @@ include(GNUInstallDirs)
 install(
   TARGETS fastmcpp_core
   EXPORT fastmcpp_core
-  FILE_SET HEADERS
 )
 
 install(
@@ -93,6 +92,10 @@ install(
 )
 
 install(FILES src/fastmcppConfig.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/fastmcpp)
+
+install(FILES include/fastmcpp.hpp TYPE INCLUDE)
+# Ugh. Installing just `DIRECTORY include` results in `include/include/fastmcpp{.hpp,/...}`, which is not what we want.
+install(DIRECTORY include/fastmcpp TYPE INCLUDE)
 
 # Optional: libcurl for POST streaming and sampling handlers (modular)
 if(FASTMCPP_ENABLE_POST_STREAMING OR FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS)

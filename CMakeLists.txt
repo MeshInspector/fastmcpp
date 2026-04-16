@@ -73,15 +73,14 @@ endif()
 
 option(FASTMCPP_DEPS_ADD_SUBDIRECTORY "Add dependencies via `add_subdirectory` instead of `find_package`" OFF)
 if(FASTMCPP_DEPS_ADD_SUBDIRECTORY)
-  add_subdirectory(../cpp-httplib cpp-httplib)
-  add_subdirectory(../nlohmann-json nlohmann-json)
+  target_include_directories(fastmcpp_core PUBLIC ../nlohmann-json/include) # Ugh.
+  target_include_directories(fastmcpp_core PUBLIC ../cpp-httplib) # Ugh again.
 else()
   find_package(httplib REQUIRED)
+  target_link_libraries(fastmcpp_core PUBLIC httplib::httplib)
   find_package(nlohmann_json REQUIRED)
+  target_link_libraries(fastmcpp_core PUBLIC nlohmann_json::nlohmann_json)
 endif()
-
-target_link_libraries(fastmcpp_core PUBLIC httplib::httplib)
-target_link_libraries(fastmcpp_core PUBLIC nlohmann_json::nlohmann_json)
 
 include(GNUInstallDirs)
 

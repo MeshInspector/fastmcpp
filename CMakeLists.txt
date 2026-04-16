@@ -73,8 +73,8 @@ endif()
 
 option(FASTMCPP_DEPS_ADD_SUBDIRECTORY "Add dependencies via `add_subdirectory` instead of `find_package`" OFF)
 if(FASTMCPP_DEPS_ADD_SUBDIRECTORY)
-  target_include_directories(fastmcpp_core PUBLIC ../nlohmann-json/include) # Ugh.
-  target_include_directories(fastmcpp_core PUBLIC ../cpp-httplib) # Ugh again.
+  target_include_directories(fastmcpp_core PRIVATE ../nlohmann-json/include) # Ugh.
+  target_include_directories(fastmcpp_core PRIVATE ../cpp-httplib) # Ugh again.
 else()
   find_package(httplib REQUIRED)
   target_link_libraries(fastmcpp_core PUBLIC httplib::httplib)

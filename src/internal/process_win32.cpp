@@ -720,7 +720,8 @@ std::optional<std::string> find_executable(const std::string& name)
 {
     if (std::filesystem::path(name).is_absolute())
     {
-        if (std::filesystem::exists(name))
+        std::error_code ec;
+        if (std::filesystem::exists(name, ec))
             return name;
         return std::nullopt;
     }
@@ -759,12 +760,14 @@ std::optional<std::string> find_executable(const std::string& name)
         for (const auto& ext : extensions)
         {
             std::filesystem::path candidate = std::filesystem::path(dir) / (name + ext);
-            if (std::filesystem::exists(candidate))
+            std::error_code ec;
+            if (std::filesystem::exists(candidate, ec))
                 return candidate.string();
         }
 
         std::filesystem::path candidate = std::filesystem::path(dir) / name;
-        if (std::filesystem::exists(candidate))
+        std::error_code ec;
+        if (std::filesystem::exists(candidate, ec))
             return candidate.string();
     }
 
@@ -772,12 +775,14 @@ std::optional<std::string> find_executable(const std::string& name)
     for (const auto& ext : extensions)
     {
         std::filesystem::path candidate = std::filesystem::path(dir) / (name + ext);
-        if (std::filesystem::exists(candidate))
+        std::error_code ec;
+        if (std::filesystem::exists(candidate, ec))
             return candidate.string();
     }
 
     std::filesystem::path candidate = std::filesystem::path(dir) / name;
-    if (std::filesystem::exists(candidate))
+        std::error_code ec;
+    if (std::filesystem::exists(candidate, ec))
         return candidate.string();
 
     return std::nullopt;

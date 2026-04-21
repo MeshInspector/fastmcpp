@@ -197,7 +197,8 @@ bool is_within(const std::filesystem::path& root, const std::filesystem::path& c
 resources::ResourceContent read_file_content(const std::filesystem::path& path,
                                              const std::string& uri)
 {
-    if (!std::filesystem::exists(path) || !std::filesystem::is_regular_file(path))
+    std::error_code ec;
+    if (!std::filesystem::exists(path, ec) || !std::filesystem::is_regular_file(path, ec))
         throw NotFoundError("Skill file not found: " + path.string());
 
     resources::ResourceContent content;
@@ -245,11 +246,12 @@ SkillProvider::SkillProvider(std::filesystem::path skill_path, std::string main_
       skill_name_(skill_path_.filename().string()), main_file_name_(std::move(main_file_name)),
       supporting_files_(supporting_files)
 {
-    if (!std::filesystem::exists(skill_path_) || !std::filesystem::is_directory(skill_path_))
+    std::error_code ec;
+    if (!std::filesystem::exists(skill_path_, ec) || !std::filesystem::is_directory(skill_path_, ec))
         throw ValidationError("Skill directory not found: " + skill_path_.string());
 
     const auto main_file = skill_path_ / main_file_name_;
-    if (!std::filesystem::exists(main_file))
+    if (!std::filesystem::exists(main_file, ec))
         throw ValidationError("Main skill file not found: " + main_file.string());
 }
 
@@ -439,7 +441,8 @@ void SkillsDirectoryProvider::discover_skills() const
     for (const auto& root_raw : roots_)
     {
         const auto root = std::filesystem::absolute(root_raw).lexically_normal();
-        if (!std::filesystem::exists(root) || !std::filesystem::is_directory(root))
+        std::error_code ec;
+        if (!std::filesystem::exists(root, ec) || !std::filesystem::is_directory(root, ec))
             continue;
 
         for (const auto& entry : std::filesystem::directory_iterator(root))
@@ -449,7 +452,8 @@ void SkillsDirectoryProvider::discover_skills() const
 
             const auto skill_dir = entry.path();
             const auto main_file = skill_dir / main_file_name_;
-            if (!std::filesystem::exists(main_file))
+            std::error_code ec;
+            if (!std::filesystem::exists(main_file, ec))
                 continue;
 
             const auto skill_name = skill_dir.filename().string();

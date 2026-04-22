@@ -122,12 +122,12 @@ static std::optional<Json> resolve_local_ref(const Json& root, const std::string
 
     std::string pointer = ref.substr(1);
     if (pointer.empty())
-        return root;
+        return {root};
 
     try
     {
         nlohmann::json::json_pointer json_ptr(pointer);
-        return root.at(json_ptr);
+        return {root.at(json_ptr)};
     }
     catch (...)
     {

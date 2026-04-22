@@ -189,7 +189,7 @@ static std::string extract_session_id(const fastmcpp::Json& params)
 static std::optional<fastmcpp::Json> extract_request_meta(const fastmcpp::Json& params)
 {
     if (params.contains("_meta") && params["_meta"].is_object())
-        return params["_meta"];
+        return {params["_meta"]};
     return std::nullopt;
 }
 

@@ -71,6 +71,14 @@ if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
 endif()
 
+# inject work-around for Clang libc++ and older Xcode versions' compatibility
+if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  target_precompile_headers(fastmcpp_core
+    PRIVATE
+      $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/include/fastmcpp/clang.hpp>
+  )
+endif()
+
 option(FASTMCPP_DEPS_ADD_SUBDIRECTORY "Add dependencies via `add_subdirectory` instead of `find_package`" OFF)
 if(FASTMCPP_DEPS_ADD_SUBDIRECTORY)
   target_include_directories(fastmcpp_core PRIVATE ../nlohmann-json/include) # Ugh.

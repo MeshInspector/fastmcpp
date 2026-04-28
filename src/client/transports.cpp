@@ -4,6 +4,7 @@
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/util/json.hpp"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <fstream>
@@ -911,7 +912,10 @@ void SseClientTransport::start_sse_listener()
                             if (pos != std::string::npos)
                             {
                                 pos += std::string("session_id=").size();
-                                auto end = endpoint_path_.find_first_of("&#", pos);
+                                // work-around for VS 2022
+                                // more info: https://developercommunity.microsoft.com/t/11080354
+                                //auto end = endpoint_path_.find_first_of("&#", pos);
+                                auto end = std::min(endpoint_path_.find('&', pos), endpoint_path_.find('#', pos));
                                 session_id_ = endpoint_path_.substr(pos, end == std::string::npos
                                                                              ? std::string::npos
                                                                              : (end - pos));

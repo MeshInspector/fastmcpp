@@ -400,6 +400,11 @@ if(FASTMCPP_BUILD_TESTS)
   target_link_libraries(fastmcpp_server_sse_http_integration PRIVATE fastmcpp_core)
   add_test(NAME fastmcpp_server_sse_http_integration COMMAND fastmcpp_server_sse_http_integration)
 
+  # SseServerWrapper::add_route() — custom HTTP routes alongside /sse + /messages
+  add_executable(fastmcpp_server_sse_add_route tests/server/sse_add_route.cpp)
+  target_link_libraries(fastmcpp_server_sse_add_route PRIVATE fastmcpp_core)
+  add_test(NAME fastmcpp_server_sse_add_route COMMAND fastmcpp_server_sse_add_route)
+
   # SSE bidirectional server-initiated requests (ServerSession -> client -> response)
   add_executable(fastmcpp_server_sse_bidirectional_requests tests/server/sse_bidirectional_requests.cpp)
   target_link_libraries(fastmcpp_server_sse_bidirectional_requests PRIVATE fastmcpp_core)

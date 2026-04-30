@@ -126,6 +126,12 @@ void SseServerWrapper::apply_additional_response_headers(httplib::Response& res)
         res.set_header(name, value);
 }
 
+void SseServerWrapper::add_route(const std::string& method, const std::string& path,
+                                 HttpRouteHandler handler)
+{
+    extra_routes_.push_back({method, path, std::move(handler)});
+}
+
 std::string SseServerWrapper::generate_session_id()
 {
     // Generate cryptographically secure random session ID (128 bits = 32 hex chars)
@@ -631,6 +637,21 @@ bool SseServerWrapper::start()
                       apply_additional_response_headers(res);
                       res.status = 204;
                   });
+
+    // Install custom routes registered via add_route(). Done after the built-in /sse
+    // and /messages handlers so user routes layer on top, and before listen_after_bind.
+    for (const auto& r : extra_routes_)
+    {
+        if (r.method == "GET")
+            svr_->Get(r.path, r.handler);
+        else if (r.method == "POST")
+            svr_->Post(r.path, r.handler);
+        else if (r.method == "PUT")
+            svr_->Put(r.path, r.handler);
+        else if (r.method == "DELETE")
+            svr_->Delete(r.path, r.handler);
+        // Add more httplib verbs here as future needs surface.
+    }
 
     running_ = true;
 

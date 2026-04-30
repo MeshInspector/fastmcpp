@@ -13,6 +13,7 @@
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <vector>
 
 namespace fastmcpp::server
 {
@@ -177,6 +178,25 @@ class SseServerWrapper
         return connections_.size();
     }
 
+    /**
+     * Handler signature for custom HTTP routes registered via add_route().
+     */
+    using HttpRouteHandler = std::function<void(const httplib::Request&, httplib::Response&)>;
+
+    /**
+     * Register a custom HTTP route. Must be called BEFORE start().
+     *
+     * The route is installed on the underlying httplib::Server during start(),
+     * after the built-in /sse and /messages handlers. The path follows httplib's
+     * matching rules: literal for an exact path match, or regex if the path
+     * contains regex metacharacters (e.g. R"(/api/(.+))").
+     *
+     * @param method HTTP verb. Currently supports "GET", "POST", "PUT", "DELETE".
+     * @param path   Path or regex per httplib semantics.
+     * @param handler Function invoked when a matching request arrives.
+     */
+    void add_route(const std::string& method, const std::string& path, HttpRouteHandler handler);
+
   private:
     void run_server();
     void send_event_to_all_clients(const fastmcpp::Json& event);
@@ -218,6 +238,15 @@ class SseServerWrapper
     // Active SSE connections mapped by session ID
     std::unordered_map<std::string, std::shared_ptr<ConnectionState>> connections_;
     mutable std::mutex conns_mutex_;
+
+    // Custom routes registered via add_route(); installed during start().
+    struct ExtraRoute
+    {
+        std::string method;
+        std::string path;
+        HttpRouteHandler handler;
+    };
+    std::vector<ExtraRoute> extra_routes_;
 };
 
 } // namespace fastmcpp::server

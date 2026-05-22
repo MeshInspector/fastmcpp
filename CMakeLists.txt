@@ -72,7 +72,7 @@ if(MSVC)
 endif()
 
 # inject work-around for Clang libc++ and older Xcode versions' compatibility
-if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
   target_precompile_headers(fastmcpp_core
     PRIVATE
       $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/include/fastmcpp/clang.hpp>

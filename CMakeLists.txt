@@ -69,6 +69,10 @@ target_include_directories(fastmcpp_core PUBLIC
 # MSVC: avoid parallel compilation PDB contention (C1041) in large targets
 if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
+else()
+  # match consumers compiled with hidden visibility (e.g. MeshLib), otherwise ld64 warns:
+  # "direct access ... to global weak symbol ... means the weak symbol cannot be overridden at runtime"
+  target_compile_options(fastmcpp_core PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
 endif()
 
 # inject work-around for Clang libc++ and older Xcode versions' compatibility

@@ -199,6 +199,8 @@ endif()
 target_sources(fastmcpp_core PRIVATE src/internal/process.cpp)
 find_package(Threads REQUIRED)
 target_link_libraries(fastmcpp_core PRIVATE Threads::Threads)
+# dlopen() in filesystem_provider.cpp lives in libdl on glibc < 2.34
+target_link_libraries(fastmcpp_core PRIVATE ${CMAKE_DL_LIBS})
 
 if(FASTMCPP_BUILD_TESTS)
   add_executable(fastmcpp src/cli/main.cpp)

@@ -17,7 +17,9 @@ option(FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS "Enable built-in OpenAI/Anthropic 
 
 file(GLOB_RECURSE HEADERS "include/*.hpp")
 
-add_library(fastmcpp_core STATIC
+# shared with BUILD_SHARED_LIBS: a static fastmcpp_core.lib is ~300 MB on MSVC
+# (every TU carries nlohmann-json and httplib templates)
+add_library(fastmcpp_core
     src/types.cpp
     src/util/schema_build.cpp
     src/app.cpp
@@ -69,7 +71,10 @@ target_include_directories(fastmcpp_core PUBLIC
 # MSVC: avoid parallel compilation PDB contention (C1041) in large targets
 if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
-else()
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(fastmcpp_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+  endif()
+elseif(NOT BUILD_SHARED_LIBS)
   # match consumers compiled with hidden visibility (e.g. MeshLib), otherwise ld64 warns:
   # "direct access ... to global weak symbol ... means the weak symbol cannot be overridden at runtime"
   target_compile_options(fastmcpp_core PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
@@ -189,6 +194,8 @@ endif()
 target_sources(fastmcpp_core PRIVATE src/internal/process.cpp)
 find_package(Threads REQUIRED)
 target_link_libraries(fastmcpp_core PRIVATE Threads::Threads)
+# dlopen() in filesystem_provider.cpp lives in libdl on glibc < 2.34
+target_link_libraries(fastmcpp_core PRIVATE ${CMAKE_DL_LIBS})
 
 if(FASTMCPP_BUILD_TESTS)
   add_executable(fastmcpp src/cli/main.cpp)

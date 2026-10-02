@@ -18,7 +18,7 @@ option(FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS "Enable built-in OpenAI/Anthropic 
 file(GLOB_RECURSE HEADERS "include/*.hpp")
 
 # a static fastmcpp_core.lib is ~300 MB on MSVC (every TU carries nlohmann-json and httplib templates)
-if(WIN32 AND BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
   set(FASTMCPP_CORE_LIBRARY_TYPE SHARED)
 else()
   set(FASTMCPP_CORE_LIBRARY_TYPE STATIC)
@@ -79,7 +79,7 @@ if(MSVC)
   if(FASTMCPP_CORE_LIBRARY_TYPE STREQUAL "SHARED")
     set_target_properties(fastmcpp_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
   endif()
-else()
+elseif(FASTMCPP_CORE_LIBRARY_TYPE STREQUAL "STATIC")
   # match consumers compiled with hidden visibility (e.g. MeshLib), otherwise ld64 warns:
   # "direct access ... to global weak symbol ... means the weak symbol cannot be overridden at runtime"
   target_compile_options(fastmcpp_core PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)

@@ -1,5 +1,6 @@
 // fastmcpp OpenTelemetry-style tracing helpers (no-op unless exporter configured)
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/types.hpp"
 
@@ -16,7 +17,7 @@ constexpr const char* INSTRUMENTATION_NAME = "fastmcp";
 constexpr const char* TRACE_PARENT_KEY = "fastmcp.traceparent";
 constexpr const char* TRACE_STATE_KEY = "fastmcp.tracestate";
 
-struct SpanContext
+struct FASTMCPP_API SpanContext
 {
     std::string trace_id;
     std::string span_id;
@@ -41,7 +42,7 @@ enum class StatusCode
     Error
 };
 
-struct Span
+struct FASTMCPP_API Span
 {
     std::string name;
     std::string instrumentation_name;
@@ -82,7 +83,7 @@ class SpanExporter
     virtual void export_span(const Span& span) = 0;
 };
 
-class InMemorySpanExporter : public SpanExporter
+class FASTMCPP_API InMemorySpanExporter : public SpanExporter
 {
   public:
     void export_span(const Span& span) override;
@@ -93,7 +94,7 @@ class InMemorySpanExporter : public SpanExporter
     std::vector<Span> spans_;
 };
 
-class SpanScope
+class FASTMCPP_API SpanScope
 {
   public:
     SpanScope() = default;
@@ -117,7 +118,7 @@ class SpanScope
     Span span_;
 };
 
-class Tracer
+class FASTMCPP_API Tracer
 {
   public:
     explicit Tracer(std::string instrumentation_name, std::optional<std::string> version)
@@ -133,23 +134,23 @@ class Tracer
     std::optional<std::string> version_;
 };
 
-Tracer get_tracer(std::optional<std::string> version = std::nullopt);
-void set_span_exporter(std::shared_ptr<SpanExporter> exporter);
-std::shared_ptr<SpanExporter> span_exporter();
-SpanContext current_span_context();
+FASTMCPP_API Tracer get_tracer(std::optional<std::string> version = std::nullopt);
+FASTMCPP_API void set_span_exporter(std::shared_ptr<SpanExporter> exporter);
+FASTMCPP_API std::shared_ptr<SpanExporter> span_exporter();
+FASTMCPP_API SpanContext current_span_context();
 
-std::optional<fastmcpp::Json> inject_trace_context(const std::optional<fastmcpp::Json>& meta);
-SpanContext extract_trace_context(const std::optional<fastmcpp::Json>& meta);
+FASTMCPP_API std::optional<fastmcpp::Json> inject_trace_context(const std::optional<fastmcpp::Json>& meta);
+FASTMCPP_API SpanContext extract_trace_context(const std::optional<fastmcpp::Json>& meta);
 
-SpanScope client_span(const std::string& name, const std::string& method,
+FASTMCPP_API SpanScope client_span(const std::string& name, const std::string& method,
                       const std::string& component_key,
                       const std::optional<std::string>& session_id = std::nullopt);
-SpanScope server_span(const std::string& name, const std::string& method,
+FASTMCPP_API SpanScope server_span(const std::string& name, const std::string& method,
                       const std::string& server_name, const std::string& component_type,
                       const std::string& component_key,
                       const std::optional<fastmcpp::Json>& request_meta,
                       const std::optional<std::string>& session_id = std::nullopt);
-SpanScope delegate_span(const std::string& name, const std::string& provider_type,
+FASTMCPP_API SpanScope delegate_span(const std::string& name, const std::string& provider_type,
                         const std::string& component_key);
 
 } // namespace fastmcpp::telemetry

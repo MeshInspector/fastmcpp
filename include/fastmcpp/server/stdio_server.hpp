@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <atomic>
@@ -24,7 +25,7 @@ namespace fastmcpp::server
  * a JSON-RPC response (nlohmann::json). The make_mcp_handler() factory
  * functions in fastmcpp/mcp/handler.hpp produce compatible handlers.
  */
-class StdioServerWrapper
+class FASTMCPP_API StdioServerWrapper
 {
   public:
     using McpHandler = std::function<fastmcpp::Json(const fastmcpp::Json&)>;

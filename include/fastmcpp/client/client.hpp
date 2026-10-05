@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 /// @file client/client.hpp
 /// @brief MCP Client implementation for fastmcpp
 /// @details Provides a full MCP client API matching Python fastmcp's Client class.
@@ -104,7 +105,7 @@ class LoopbackTransport : public ITransport
 /// In-process transport that uses an MCP handler function
 /// This is useful for proxy mode mounting where we want to communicate
 /// with a mounted app via its MCP handler
-class InProcessMcpTransport : public ITransport
+class FASTMCPP_API InProcessMcpTransport : public ITransport
 {
   public:
     using HandlerFn = std::function<fastmcpp::Json(const fastmcpp::Json&)>;
@@ -183,7 +184,7 @@ struct CallToolOptions
 /// opts.meta = {{"user_id", "123"}, {"trace_id", "abc"}};
 /// auto result = client.call_tool("my_tool", {{"arg1", "value"}}, opts);
 /// @endcode
-class Client
+class FASTMCPP_API Client
 {
     struct CallbackState;
 

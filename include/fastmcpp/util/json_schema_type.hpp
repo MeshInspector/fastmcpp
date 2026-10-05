@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -45,10 +46,10 @@ struct SchemaValue
 /// This mirrors Python's json_schema_to_type behavior at runtime: validates
 /// enums/const/defaults, unions (type arrays/anyOf/oneOf), arrays/objects,
 /// and basic formats (json).
-SchemaValue json_schema_to_value(const fastmcpp::Json& schema, const fastmcpp::Json& instance);
+FASTMCPP_API SchemaValue json_schema_to_value(const fastmcpp::Json& schema, const fastmcpp::Json& instance);
 
 /// Convert a SchemaValue back to Json for ergonomic consumption/helpers.
-fastmcpp::Json schema_value_to_json(const SchemaValue& value);
+FASTMCPP_API fastmcpp::Json schema_value_to_json(const SchemaValue& value);
 
 /// Helper to unwrap a SchemaValue into a concrete C++ type via nlohmann::json.
 template <typename T>

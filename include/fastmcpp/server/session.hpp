@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <atomic>
@@ -67,7 +68,7 @@ using SendCallback = std::function<void(const Json&)>;
  *
  * Thread-safe: All methods can be called from multiple threads.
  */
-class ServerSession
+class FASTMCPP_API ServerSession
 {
   public:
     /// Default timeout for server-initiated requests

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <string>
@@ -17,7 +18,7 @@ namespace fastmcpp::server
 /// - oneOf/anyOf branches must also be primitive (or const/enum) types.
 ///
 /// Throws fastmcpp::ValidationError on violation.
-void validate_elicitation_json_schema(const fastmcpp::Json& schema);
+FASTMCPP_API void validate_elicitation_json_schema(const fastmcpp::Json& schema);
 
 /// Build an MCP elicitation schema from a base JSON Schema.
 ///
@@ -31,6 +32,6 @@ void validate_elicitation_json_schema(const fastmcpp::Json& schema);
 ///
 /// The input is expected to look like a standard JSON Schema object with
 /// `"properties"` and optional `"required"`; additional keywords are preserved.
-fastmcpp::Json get_elicitation_schema(const fastmcpp::Json& base_schema);
+FASTMCPP_API fastmcpp::Json get_elicitation_schema(const fastmcpp::Json& base_schema);
 
 } // namespace fastmcpp::server

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/transform.hpp"
 #include "fastmcpp/resources/resource.hpp"
@@ -16,7 +17,7 @@ namespace fastmcpp::providers::transforms
 /// Transform that injects list_resources and read_resource as synthetic tools.
 ///
 /// Parity with Python fastmcp ResourcesAsTools transform.
-class ResourcesAsTools : public Transform
+class FASTMCPP_API ResourcesAsTools : public Transform
 {
   public:
     ResourcesAsTools() = default;

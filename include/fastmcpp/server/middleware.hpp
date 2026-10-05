@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <functional>
@@ -45,7 +46,7 @@ using AfterHook = std::function<void(const std::string& route, const fastmcpp::J
 /// srv.add_after(mw.create_tools_list_hook());   // Append injected tools
 /// srv.add_before(mw.create_tools_call_hook());  // Intercept calls
 /// ```
-class ToolInjectionMiddleware
+class FASTMCPP_API ToolInjectionMiddleware
 {
   public:
     ToolInjectionMiddleware() = default;
@@ -89,11 +90,11 @@ class ToolInjectionMiddleware
 /// Factory: Create middleware with prompt introspection tools
 /// @param pm PromptManager to query
 /// @return Configured ToolInjectionMiddleware
-ToolInjectionMiddleware make_prompt_tool_middleware(const prompts::PromptManager& pm);
+FASTMCPP_API ToolInjectionMiddleware make_prompt_tool_middleware(const prompts::PromptManager& pm);
 
 /// Factory: Create middleware with resource introspection tools
 /// @param rm ResourceManager to query
 /// @return Configured ToolInjectionMiddleware
-ToolInjectionMiddleware make_resource_tool_middleware(const resources::ResourceManager& rm);
+FASTMCPP_API ToolInjectionMiddleware make_resource_tool_middleware(const resources::ResourceManager& rm);
 
 } // namespace fastmcpp::server

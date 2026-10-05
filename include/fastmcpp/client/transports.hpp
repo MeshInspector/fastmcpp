@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/client/client.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -21,7 +22,7 @@ namespace fastmcpp::client
 
 class ITransport;
 
-class HttpTransport : public ITransport
+class FASTMCPP_API HttpTransport : public ITransport
 {
   public:
     explicit HttpTransport(std::string base_url,
@@ -56,7 +57,7 @@ class HttpTransport : public ITransport
 // Launches an MCP stdio server as a subprocess and performs JSON-RPC requests
 // over its stdin/stdout. By default, the subprocess is kept alive between calls
 // to better match Python fastmcp behavior; pass keep_alive=false to spawn per call.
-class StdioTransport : public ITransport
+class FASTMCPP_API StdioTransport : public ITransport
 {
   public:
     /// Construct a StdioTransport with optional stderr logging (v2.13.0+)
@@ -112,7 +113,7 @@ class StdioTransport : public ITransport
 /// 1. Client connects to /sse endpoint (GET) to establish event stream
 /// 2. Client sends JSON-RPC requests to /messages endpoint (POST)
 /// 3. Server sends JSON-RPC responses back via the SSE stream
-class SseClientTransport : public ITransport,
+class FASTMCPP_API SseClientTransport : public ITransport,
                            public IServerRequestTransport,
                            public IResettableTransport,
                            public ISessionTransport
@@ -182,7 +183,7 @@ class SseClientTransport : public ITransport,
 /// 3. Session ID management via Mcp-Session-Id header
 ///
 /// Reference: https://spec.modelcontextprotocol.io/specification/2025-03-26/basic/transports/
-class StreamableHttpTransport : public ITransport,
+class FASTMCPP_API StreamableHttpTransport : public ITransport,
                                 public IResettableTransport,
                                 public ISessionTransport
 {

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/middleware.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -11,7 +12,7 @@ namespace fastmcpp::server
 /// Response limiting middleware that truncates oversized tool call responses.
 ///
 /// Parity with Python fastmcp ResponseLimiting middleware.
-class ResponseLimitingMiddleware
+class FASTMCPP_API ResponseLimitingMiddleware
 {
   public:
     explicit ResponseLimitingMiddleware(size_t max_size = 1'000'000,

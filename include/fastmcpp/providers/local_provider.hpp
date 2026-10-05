@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/prompts/manager.hpp"
@@ -23,7 +24,7 @@ enum class DuplicateBehavior
     Ignore
 };
 
-class LocalProvider : public Provider
+class FASTMCPP_API LocalProvider : public Provider
 {
   public:
     explicit LocalProvider(DuplicateBehavior on_duplicate = DuplicateBehavior::Error)

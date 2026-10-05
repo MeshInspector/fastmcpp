@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/session.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -54,7 +55,7 @@ struct Options
     std::chrono::milliseconds timeout{ServerSession::DEFAULT_TIMEOUT};
 };
 
-struct Step
+struct FASTMCPP_API Step
 {
     fastmcpp::Json response; // CreateMessageResult(+WithTools) JSON
     std::vector<Message> history;
@@ -71,10 +72,10 @@ struct Result
     std::vector<Message> history;
 };
 
-Step sample_step(std::shared_ptr<ServerSession> session, const std::vector<Message>& messages,
+FASTMCPP_API Step sample_step(std::shared_ptr<ServerSession> session, const std::vector<Message>& messages,
                  const Options& options);
 
-Result sample(std::shared_ptr<ServerSession> session, const std::vector<Message>& messages,
+FASTMCPP_API Result sample(std::shared_ptr<ServerSession> session, const std::vector<Message>& messages,
               Options options);
 
 } // namespace fastmcpp::server::sampling

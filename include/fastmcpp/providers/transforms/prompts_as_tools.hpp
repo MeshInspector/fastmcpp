@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/transform.hpp"
 
@@ -13,7 +14,7 @@ namespace fastmcpp::providers::transforms
 /// Transform that injects list_prompts and get_prompt as synthetic tools.
 ///
 /// Parity with Python fastmcp PromptsAsTools transform.
-class PromptsAsTools : public Transform
+class FASTMCPP_API PromptsAsTools : public Transform
 {
   public:
     PromptsAsTools() = default;

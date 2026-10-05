@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/resources/resource.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -25,7 +26,7 @@ struct TemplateParameter
 ///   - {var}    - path parameter, matches [^/]+
 ///   - {var*}   - wildcard parameter, matches .+
 ///   - {?a,b,c} - query parameters
-struct ResourceTemplate
+struct FASTMCPP_API ResourceTemplate
 {
     std::string uri_template;                         // e.g., "weather://{city}/current"
     std::string name;                                 // Human-readable name
@@ -59,18 +60,18 @@ struct ResourceTemplate
 };
 
 /// Extract path parameters from URI template: {var}, {var*}
-std::vector<std::string> extract_path_params(const std::string& uri_template);
+FASTMCPP_API std::vector<std::string> extract_path_params(const std::string& uri_template);
 
 /// Extract query parameters from URI template: {?a,b,c}
-std::vector<std::string> extract_query_params(const std::string& uri_template);
+FASTMCPP_API std::vector<std::string> extract_query_params(const std::string& uri_template);
 
 /// Build regex pattern from URI template
-std::string build_regex_pattern(const std::string& uri_template);
+FASTMCPP_API std::string build_regex_pattern(const std::string& uri_template);
 
 /// URL-decode a string
-std::string url_decode(const std::string& encoded);
+FASTMCPP_API std::string url_decode(const std::string& encoded);
 
 /// URL-encode a string
-std::string url_encode(const std::string& decoded);
+FASTMCPP_API std::string url_encode(const std::string& decoded);
 
 } // namespace fastmcpp::resources

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 namespace fastmcpp::util::schema_build
@@ -10,6 +11,6 @@ namespace fastmcpp::util::schema_build
 // Simple format example: {"a":"integer","b":"number","c":"string","d":"boolean"}
 // Resulting schema:
 // {"type":"object","properties":{...},"required":["a","b","c","d"]}
-fastmcpp::Json to_object_schema_from_simple(const fastmcpp::Json& simple);
+FASTMCPP_API fastmcpp::Json to_object_schema_from_simple(const fastmcpp::Json& simple);
 
 } // namespace fastmcpp::util::schema_build

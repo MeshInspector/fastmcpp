@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/middleware.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -40,7 +41,7 @@ using LogCallback = std::function<void(const RequestLogEntry&)>;
 /// srv.add_before(logger->create_before_hook());
 /// srv.add_after(logger->create_after_hook());
 /// ```
-class LoggingMiddleware
+class FASTMCPP_API LoggingMiddleware
 {
   public:
     explicit LoggingMiddleware(LogCallback callback) : callback_(std::move(callback)) {}
@@ -70,7 +71,7 @@ class LoggingMiddleware
 /// );
 /// srv.add_before(limiter->create_hook());
 /// ```
-class RateLimitMiddleware
+class FASTMCPP_API RateLimitMiddleware
 {
   public:
     /// Construct rate limiter
@@ -117,7 +118,7 @@ class RateLimitMiddleware
 /// srv.add_before(limiter->create_before_hook());
 /// srv.add_after(limiter->create_after_hook());
 /// ```
-class ConcurrencyLimitMiddleware
+class FASTMCPP_API ConcurrencyLimitMiddleware
 {
   public:
     /// Construct concurrency limiter

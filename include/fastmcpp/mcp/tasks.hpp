@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include <string>
 
@@ -15,7 +16,7 @@ static constexpr int kDefaultMinimumCheckIntervalMs = 500;
 /// when called from within a task execution context created by `mcp::make_mcp_handler(...)`.
 ///
 /// No-op if called outside a background task context.
-void report_status_message(const std::string& message);
+FASTMCPP_API void report_status_message(const std::string& message);
 
 namespace detail
 {
@@ -23,8 +24,8 @@ using StatusMessageFn = void (*)(void* ctx, const std::string& task_id, const st
 
 // Internal: set/clear the task context for the current thread.
 // Used by the MCP task execution runtime (TaskRegistry).
-void set_current_task(void* ctx, StatusMessageFn fn, std::string task_id);
-void clear_current_task();
+FASTMCPP_API void set_current_task(void* ctx, StatusMessageFn fn, std::string task_id);
+FASTMCPP_API void clear_current_task();
 } // namespace detail
 
 } // namespace fastmcpp::mcp::tasks

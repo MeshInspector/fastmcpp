@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/providers/transforms/transform.hpp"
@@ -9,7 +10,7 @@
 namespace fastmcpp::providers::transforms
 {
 
-class VersionFilter : public Transform
+class FASTMCPP_API VersionFilter : public Transform
 {
   public:
     VersionFilter(std::optional<std::string> version_gte, std::optional<std::string> version_lt,

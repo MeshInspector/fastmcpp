@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/prompts/prompt.hpp"
 #include "fastmcpp/resources/resource.hpp"
@@ -26,7 +27,7 @@ using GetResourceTemplateNext =
 using ListPromptsNext = std::function<std::vector<prompts::Prompt>()>;
 using GetPromptNext = std::function<std::optional<prompts::Prompt>(const std::string&)>;
 
-class Transform
+class FASTMCPP_API Transform
 {
   public:
     virtual ~Transform() = default;

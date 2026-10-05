@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/prompts/prompt.hpp"
@@ -18,7 +19,7 @@
 namespace fastmcpp::providers
 {
 
-class Provider
+class FASTMCPP_API Provider
 {
   public:
     Provider() : visibility_(std::make_shared<transforms::Visibility>()), transforms_{visibility_}

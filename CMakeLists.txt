@@ -17,7 +17,7 @@ option(FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS "Enable built-in OpenAI/Anthropic 
 
 file(GLOB_RECURSE HEADERS "include/*.hpp")
 
-# shared with BUILD_SHARED_LIBS: a static fastmcpp_core.lib is ~300 MB on MSVC
+# shared with BUILD_SHARED_LIBS (exports FASTMCPP_API): a static fastmcpp_core.lib is ~300 MB on MSVC
 # (every TU carries nlohmann-json and httplib templates)
 add_library(fastmcpp_core
     src/types.cpp
@@ -72,7 +72,8 @@ target_include_directories(fastmcpp_core PUBLIC
 if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
   if(BUILD_SHARED_LIBS)
-    set_target_properties(fastmcpp_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    # std members of FASTMCPP_API classes
+    target_compile_options(fastmcpp_core PRIVATE /wd4251 /wd4275)
   endif()
 elseif(NOT BUILD_SHARED_LIBS)
   # match consumers compiled with hidden visibility (e.g. MeshLib), otherwise ld64 warns:

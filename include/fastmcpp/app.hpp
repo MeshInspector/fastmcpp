@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/client/types.hpp"
 #include "fastmcpp/prompts/manager.hpp"
@@ -61,7 +62,7 @@ struct ProxyMountedApp
 ///
 /// // Tools accessible as "weather_get_forecast"
 /// ```
-class FastMCP
+class FASTMCPP_API FastMCP
 {
   public:
     struct ToolOptions
@@ -118,6 +119,10 @@ class FastMCP
                      std::optional<std::string> instructions = std::nullopt,
                      std::vector<std::shared_ptr<providers::Provider>> providers = {},
                      int list_page_size = 0, bool dereference_schemas = true);
+    FastMCP(const FastMCP&) = delete;
+    FastMCP& operator=(const FastMCP&) = delete;
+    FastMCP(FastMCP&&) = default;
+    FastMCP& operator=(FastMCP&&) = default;
     /// Backward-compatible constructor overload (legacy parameter order).
     FastMCP(std::string name, std::string version, std::optional<std::string> website_url,
             std::optional<std::vector<Icon>> icons,

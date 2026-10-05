@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/prompts/prompt.hpp"
 
@@ -10,7 +11,7 @@
 namespace fastmcpp::prompts
 {
 
-class PromptManager
+class FASTMCPP_API PromptManager
 {
   public:
     void add(const std::string& name, const Prompt& p)

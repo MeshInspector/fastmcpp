@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <string>
@@ -6,7 +7,7 @@
 namespace fastmcpp
 {
 
-struct Settings
+struct FASTMCPP_API Settings
 {
     std::string log_level{"INFO"};
     bool enable_rich_tracebacks{false};

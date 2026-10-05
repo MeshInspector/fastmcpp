@@ -1,31 +1,32 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include <stdexcept>
 #include <string>
 
 namespace fastmcpp
 {
 
-struct Error : public std::runtime_error
+struct FASTMCPP_CLASS Error : public std::runtime_error
 {
     using std::runtime_error::runtime_error;
 };
 
-struct NotFoundError : public Error
+struct FASTMCPP_CLASS NotFoundError : public Error
 {
     using Error::Error;
 };
 
-struct ValidationError : public Error
+struct FASTMCPP_CLASS ValidationError : public Error
 {
     using Error::Error;
 };
 
-struct ToolTimeoutError : public Error
+struct FASTMCPP_CLASS ToolTimeoutError : public Error
 {
     using Error::Error;
 };
 
-struct TransportError : public Error
+struct FASTMCPP_CLASS TransportError : public Error
 {
     using Error::Error;
 };

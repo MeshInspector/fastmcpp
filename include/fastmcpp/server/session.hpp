@@ -18,21 +18,21 @@ namespace fastmcpp::server
 {
 
 /// Exception thrown when a server request times out
-class RequestTimeoutError : public std::runtime_error
+class FASTMCPP_CLASS RequestTimeoutError : public std::runtime_error
 {
   public:
     explicit RequestTimeoutError(const std::string& msg) : std::runtime_error(msg) {}
 };
 
 /// Exception thrown when sampling is not supported by client
-class SamplingNotSupportedError : public std::runtime_error
+class FASTMCPP_CLASS SamplingNotSupportedError : public std::runtime_error
 {
   public:
     explicit SamplingNotSupportedError(const std::string& msg) : std::runtime_error(msg) {}
 };
 
 /// Exception thrown when client returns an error response
-class ClientError : public std::runtime_error
+class FASTMCPP_CLASS ClientError : public std::runtime_error
 {
   public:
     ClientError(int code, const std::string& msg, const Json& data = nullptr)

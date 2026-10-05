@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/catalog.hpp"
 #include "fastmcpp/types.hpp"
@@ -64,7 +65,7 @@ using SearchResultSerializer = std::function<Json(const std::vector<tools::Tool>
 /// Hidden tools remain callable via get_tool() (delegates to downstream).
 ///
 /// Parity with Python fastmcp BaseSearchTransform (commit c96c0400).
-class BaseSearchTransform : public CatalogTransform
+class FASTMCPP_CLASS BaseSearchTransform : public CatalogTransform
 {
   public:
     struct Options

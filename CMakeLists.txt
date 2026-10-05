@@ -75,10 +75,13 @@ if(MSVC)
     # std members of FASTMCPP_API classes
     target_compile_options(fastmcpp_core PRIVATE /wd4251 /wd4275)
   endif()
-elseif(NOT BUILD_SHARED_LIBS)
-  # match consumers compiled with hidden visibility (e.g. MeshLib), otherwise ld64 warns:
-  # "direct access ... to global weak symbol ... means the weak symbol cannot be overridden at runtime"
+else()
+  # export only FASTMCPP_API; also matches consumers compiled with hidden visibility (e.g. MeshLib),
+  # otherwise ld64 warns: "direct access ... to global weak symbol ... cannot be overridden at runtime"
   target_compile_options(fastmcpp_core PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
+endif()
+if(BUILD_SHARED_LIBS)
+  target_compile_definitions(fastmcpp_core PUBLIC FASTMCPP_SHARED)
 endif()
 
 # inject work-around for Clang libc++ and older Xcode versions' compatibility

@@ -40,7 +40,7 @@ class ResourceTask;
 // ============================================================================
 
 /// Abstract transport interface for MCP communication
-class ITransport
+class FASTMCPP_CLASS ITransport
 {
   public:
     virtual ~ITransport() = default;
@@ -53,7 +53,7 @@ class ITransport
 };
 
 /// Optional transport interface: some transports support explicit session reset/disconnect.
-class IResettableTransport
+class FASTMCPP_CLASS IResettableTransport
 {
   public:
     virtual ~IResettableTransport() = default;
@@ -68,7 +68,7 @@ using ServerRequestHandler =
 
 /// Optional transport interface: some transports can accept server-initiated requests and send
 /// responses.
-class IServerRequestTransport
+class FASTMCPP_CLASS IServerRequestTransport
 {
   public:
     virtual ~IServerRequestTransport() = default;
@@ -76,7 +76,7 @@ class IServerRequestTransport
 };
 
 /// Optional transport interface: some transports expose MCP session IDs.
-class ISessionTransport
+class FASTMCPP_CLASS ISessionTransport
 {
   public:
     virtual ~ISessionTransport() = default;
@@ -85,7 +85,7 @@ class ISessionTransport
 };
 
 /// Loopback transport for in-process server testing
-class LoopbackTransport : public ITransport
+class FASTMCPP_CLASS LoopbackTransport : public ITransport
 {
   public:
     explicit LoopbackTransport(std::shared_ptr<fastmcpp::server::Server> server)

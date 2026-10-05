@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 /// @file middleware_pipeline.hpp
 /// @brief Full middleware pipeline system for fastmcpp (matching Python fastmcp)
 ///
@@ -57,7 +58,7 @@ struct MiddlewareContext
 using CallNext = std::function<Json(const MiddlewareContext&)>;
 
 /// Base middleware class with virtual hooks for each MCP operation
-class Middleware
+class FASTMCPP_CLASS Middleware
 {
   public:
     virtual ~Middleware() = default;
@@ -197,7 +198,7 @@ class MiddlewarePipeline
 // =============================================================================
 
 /// Logging middleware - logs requests and responses
-class LoggingMiddleware : public Middleware
+class FASTMCPP_CLASS LoggingMiddleware : public Middleware
 {
   public:
     using LogCallback = std::function<void(const std::string&)>;
@@ -257,7 +258,7 @@ class LoggingMiddleware : public Middleware
 };
 
 /// Timing middleware - records execution time
-class TimingMiddleware : public Middleware
+class FASTMCPP_CLASS TimingMiddleware : public Middleware
 {
   public:
     struct TimingStats
@@ -326,7 +327,7 @@ class TimingMiddleware : public Middleware
 };
 
 /// Response caching middleware
-class CachingMiddleware : public Middleware
+class FASTMCPP_CLASS CachingMiddleware : public Middleware
 {
   public:
     struct CacheEntry
@@ -445,7 +446,7 @@ class CachingMiddleware : public Middleware
 };
 
 /// Rate limiting middleware using token bucket algorithm
-class RateLimitingMiddleware : public Middleware
+class FASTMCPP_CLASS RateLimitingMiddleware : public Middleware
 {
   public:
     struct Config
@@ -510,7 +511,7 @@ class RateLimitingMiddleware : public Middleware
 };
 
 /// Error handling middleware - catches exceptions and converts to MCP errors
-class ErrorHandlingMiddleware : public Middleware
+class FASTMCPP_CLASS ErrorHandlingMiddleware : public Middleware
 {
   public:
     using ErrorCallback = std::function<void(const std::string& method, const std::exception& e)>;
@@ -582,7 +583,7 @@ class ErrorHandlingMiddleware : public Middleware
 };
 
 /// Ping middleware - sends periodic pings to keep client connections alive
-class PingMiddleware : public Middleware
+class FASTMCPP_CLASS PingMiddleware : public Middleware
 {
   public:
     explicit PingMiddleware(std::chrono::milliseconds interval = std::chrono::milliseconds(30000))

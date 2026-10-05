@@ -76,7 +76,7 @@ struct FASTMCPP_API Span
     }
 };
 
-class SpanExporter
+class FASTMCPP_CLASS SpanExporter
 {
   public:
     virtual ~SpanExporter() = default;

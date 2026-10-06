@@ -17,10 +17,7 @@ The fork branched from upstream at [`9afa99f`](https://github.com/0xeb/fastmcpp/
 - The version is hard-coded in `include/fastmcpp/version.hpp`, not passed from CMake.
 - The `fastmcpp` CLI executable is built only with `FASTMCPP_BUILD_TESTS`.
 - On non-MSVC compilers `fastmcpp_core` is compiled with `-fvisibility=hidden -fvisibility-inlines-hidden`, matching consumers built with hidden visibility (avoids ld64 weak-symbol warnings).
-- `fastmcpp_core` follows `BUILD_SHARED_LIBS`: with it `ON` it is a DLL / shared library that exports only fastmcpp's own API, declared with the macros of `include/fastmcpp/export.hpp`:
-  - `FASTMCPP_API` marks the classes and free functions defined in `src/`. A new one must be marked too, otherwise code using it fails to link against the shared library.
-  - `FASTMCPP_CLASS` marks header-only types whose type info crosses the library boundary (exceptions, interfaces), so `catch` and `dynamic_cast` work across it.
-  - CMake consumers of `fastmcpp::fastmcpp_core` get the required `FASTMCPP_SHARED` definition automatically.
+- `fastmcpp_core` follows `BUILD_SHARED_LIBS`; the shared library exports only what is marked with `FASTMCPP_API` / `FASTMCPP_CLASS` (`include/fastmcpp/export.hpp`).
 - `fastmcpp_core` links `${CMAKE_DL_LIBS}` for `dlopen` (needed before glibc 2.34).
 
 ### Compiler compatibility

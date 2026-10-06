@@ -78,6 +78,7 @@ Key options:
 | `FASTMCPP_ENABLE_POST_STREAMING` | OFF     | Enable HTTP POST streaming (requires libcurl)   |
 | `FASTMCPP_FETCH_CURL`           | OFF     | Fetch and build curl (via FetchContent) if not found |
 | `FASTMCPP_ENABLE_STREAMING_TESTS` | OFF   | Enable SSE streaming tests                      |
+| `BUILD_SHARED_LIBS`              | OFF     | Build `fastmcpp_core` as a shared library (see below) |
 
 ### Platform notes
 
@@ -94,6 +95,19 @@ cmake --build build --config Release
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j"$(nproc)"
 ```
+
+### Shared library
+
+`-DBUILD_SHARED_LIBS=ON` builds `fastmcpp_core` as a DLL / shared library that exports only
+fastmcpp's own API (see `include/fastmcpp/export.hpp`):
+
+- `FASTMCPP_API` marks the classes and free functions defined in `src/`;
+- `FASTMCPP_CLASS` marks header-only types whose type info crosses the library boundary
+  (exceptions, interfaces), so `catch` and `dynamic_cast` work across it.
+
+A new class or function defined in `src/` must be marked `FASTMCPP_API`, otherwise code using it
+fails to link against the shared library. CMake consumers of `fastmcpp::fastmcpp_core` get the
+required `FASTMCPP_SHARED` definition automatically.
 
 ## Testing
 
@@ -380,6 +394,7 @@ Contributions are welcome. Please:
 2. Follow the existing code style.
 3. Add tests for new features.
 4. Update documentation as needed.
+5. Mark new classes and functions defined in `src/` with `FASTMCPP_API` (see [Shared library](#shared-library)).
 
 ## Author
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/transform.hpp"
 
@@ -23,7 +24,7 @@ namespace fastmcpp::providers::transforms
 /// - If key is in disabled_keys_, return false
 /// - If default_enabled_ is false, return true only if key is in enabled_keys_
 /// - Otherwise return true (default enabled)
-class Visibility : public Transform
+class FASTMCPP_API Visibility : public Transform
 {
   public:
     /// Disable the specified component keys. Empty = no-op.

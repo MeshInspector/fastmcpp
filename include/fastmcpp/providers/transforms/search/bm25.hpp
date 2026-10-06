@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/search/base.hpp"
 
@@ -137,7 +138,7 @@ class BM25Index
 /// catalog changes (detected via hash of tool searchable text).
 ///
 /// Parity with Python fastmcp BM25SearchTransform (commit c96c0400).
-class BM25SearchTransform : public BaseSearchTransform
+class FASTMCPP_CLASS BM25SearchTransform : public BaseSearchTransform
 {
   public:
     explicit BM25SearchTransform(Options opts = {}) : BaseSearchTransform(std::move(opts)) {}

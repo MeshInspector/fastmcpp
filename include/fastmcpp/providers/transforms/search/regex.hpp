@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/search/base.hpp"
 
@@ -13,7 +14,7 @@ namespace fastmcpp::providers::transforms::search
 /// information using std::regex_search with case-insensitive matching.
 ///
 /// Parity with Python fastmcp RegexSearchTransform (commit c96c0400).
-class RegexSearchTransform : public BaseSearchTransform
+class FASTMCPP_CLASS RegexSearchTransform : public BaseSearchTransform
 {
   public:
     explicit RegexSearchTransform(Options opts = {}) : BaseSearchTransform(std::move(opts)) {}

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/prompts/prompt.hpp"
 #include "fastmcpp/resources/resource.hpp"
@@ -20,7 +21,7 @@
 namespace fastmcpp::providers
 {
 
-class ComponentRegistry
+class FASTMCPP_CLASS ComponentRegistry
 {
   public:
     virtual ~ComponentRegistry() = default;

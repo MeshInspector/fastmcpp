@@ -1,11 +1,12 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/transform.hpp"
 
 namespace fastmcpp::providers::transforms
 {
 
-class Namespace : public Transform
+class FASTMCPP_API Namespace : public Transform
 {
   public:
     explicit Namespace(std::string prefix);

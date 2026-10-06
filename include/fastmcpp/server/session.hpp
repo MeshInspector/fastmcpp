@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <atomic>
@@ -17,21 +18,21 @@ namespace fastmcpp::server
 {
 
 /// Exception thrown when a server request times out
-class RequestTimeoutError : public std::runtime_error
+class FASTMCPP_CLASS RequestTimeoutError : public std::runtime_error
 {
   public:
     explicit RequestTimeoutError(const std::string& msg) : std::runtime_error(msg) {}
 };
 
 /// Exception thrown when sampling is not supported by client
-class SamplingNotSupportedError : public std::runtime_error
+class FASTMCPP_CLASS SamplingNotSupportedError : public std::runtime_error
 {
   public:
     explicit SamplingNotSupportedError(const std::string& msg) : std::runtime_error(msg) {}
 };
 
 /// Exception thrown when client returns an error response
-class ClientError : public std::runtime_error
+class FASTMCPP_CLASS ClientError : public std::runtime_error
 {
   public:
     ClientError(int code, const std::string& msg, const Json& data = nullptr)
@@ -67,7 +68,7 @@ using SendCallback = std::function<void(const Json&)>;
  *
  * Thread-safe: All methods can be called from multiple threads.
  */
-class ServerSession
+class FASTMCPP_API ServerSession
 {
   public:
     /// Default timeout for server-initiated requests

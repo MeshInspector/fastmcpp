@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -14,8 +15,8 @@ namespace fastmcpp::util::schema
 // - required: [..]
 // - properties: { name: { type: ... } }
 
-void validate(const Json& schema, const Json& instance);
-bool contains_ref(const Json& schema);
-Json dereference_refs(const Json& schema);
+FASTMCPP_API void validate(const Json& schema, const Json& instance);
+FASTMCPP_API bool contains_ref(const Json& schema);
+FASTMCPP_API Json dereference_refs(const Json& schema);
 
 } // namespace fastmcpp::util::schema

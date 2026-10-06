@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/provider.hpp"
 
@@ -17,7 +18,7 @@ enum class SkillSupportingFiles
     Resources,
 };
 
-class SkillProvider : public Provider
+class FASTMCPP_API SkillProvider : public Provider
 {
   public:
     explicit SkillProvider(std::filesystem::path skill_path,
@@ -51,7 +52,7 @@ class SkillProvider : public Provider
     SkillSupportingFiles supporting_files_;
 };
 
-class SkillsDirectoryProvider : public Provider
+class FASTMCPP_API SkillsDirectoryProvider : public Provider
 {
   public:
     explicit SkillsDirectoryProvider(
@@ -82,7 +83,7 @@ class SkillsDirectoryProvider : public Provider
     mutable std::vector<std::shared_ptr<SkillProvider>> providers_;
 };
 
-class ClaudeSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API ClaudeSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit ClaudeSkillsProvider(
@@ -90,7 +91,7 @@ class ClaudeSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class CursorSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API CursorSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit CursorSkillsProvider(
@@ -98,7 +99,7 @@ class CursorSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class VSCodeSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API VSCodeSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit VSCodeSkillsProvider(
@@ -106,7 +107,7 @@ class VSCodeSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class CodexSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API CodexSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit CodexSkillsProvider(
@@ -114,7 +115,7 @@ class CodexSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class GeminiSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API GeminiSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit GeminiSkillsProvider(
@@ -122,7 +123,7 @@ class GeminiSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class GooseSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API GooseSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit GooseSkillsProvider(
@@ -130,7 +131,7 @@ class GooseSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class CopilotSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API CopilotSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit CopilotSkillsProvider(
@@ -138,7 +139,7 @@ class CopilotSkillsProvider : public SkillsDirectoryProvider
         SkillSupportingFiles supporting_files = SkillSupportingFiles::Template);
 };
 
-class OpenCodeSkillsProvider : public SkillsDirectoryProvider
+class FASTMCPP_API OpenCodeSkillsProvider : public SkillsDirectoryProvider
 {
   public:
     explicit OpenCodeSkillsProvider(

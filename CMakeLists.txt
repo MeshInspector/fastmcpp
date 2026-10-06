@@ -17,7 +17,7 @@ option(FASTMCPP_ENABLE_SAMPLING_HTTP_HANDLERS "Enable built-in OpenAI/Anthropic 
 
 file(GLOB_RECURSE HEADERS "include/*.hpp")
 
-add_library(fastmcpp_core STATIC
+add_library(fastmcpp_core
     src/types.cpp
     src/util/schema_build.cpp
     src/app.cpp
@@ -69,10 +69,16 @@ target_include_directories(fastmcpp_core PUBLIC
 # MSVC: avoid parallel compilation PDB contention (C1041) in large targets
 if(MSVC)
   target_compile_options(fastmcpp_core PRIVATE /FS)
+  if(BUILD_SHARED_LIBS)
+    # C4251/C4275: std members and bases of FASTMCPP_API classes have no dll-interface
+    target_compile_options(fastmcpp_core PRIVATE /wd4251 /wd4275)
+  endif()
 else()
-  # match consumers compiled with hidden visibility (e.g. MeshLib), otherwise ld64 warns:
-  # "direct access ... to global weak symbol ... means the weak symbol cannot be overridden at runtime"
+  # export only FASTMCPP_API
   target_compile_options(fastmcpp_core PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
+endif()
+if(BUILD_SHARED_LIBS)
+  target_compile_definitions(fastmcpp_core PUBLIC FASTMCPP_SHARED)
 endif()
 
 # inject work-around for Clang libc++ and older Xcode versions' compatibility
@@ -188,7 +194,7 @@ endif()
 # Cross-platform subprocess management
 target_sources(fastmcpp_core PRIVATE src/internal/process.cpp)
 find_package(Threads REQUIRED)
-target_link_libraries(fastmcpp_core PRIVATE Threads::Threads)
+target_link_libraries(fastmcpp_core PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
 
 if(FASTMCPP_BUILD_TESTS)
   add_executable(fastmcpp src/cli/main.cpp)

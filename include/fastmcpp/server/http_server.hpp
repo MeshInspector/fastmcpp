@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/server.hpp"
 
 #include <atomic>
@@ -16,7 +17,7 @@ class Response;
 namespace fastmcpp::server
 {
 
-class HttpServerWrapper
+class FASTMCPP_API HttpServerWrapper
 {
   public:
     /**

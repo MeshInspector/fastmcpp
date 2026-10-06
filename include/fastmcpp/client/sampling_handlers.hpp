@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/types.hpp"
 
@@ -26,7 +27,7 @@ struct OpenAICompatibleOptions
 
 /// Create a sampling/createMessage callback that calls an OpenAI-compatible
 /// chat completions endpoint and returns MCP CreateMessageResult(+WithTools).
-std::function<fastmcpp::Json(const fastmcpp::Json&)>
+FASTMCPP_API std::function<fastmcpp::Json(const fastmcpp::Json&)>
 create_openai_compatible_sampling_callback(OpenAICompatibleOptions options);
 
 struct AnthropicOptions
@@ -45,7 +46,7 @@ struct AnthropicOptions
 
 /// Create a sampling/createMessage callback that calls the Anthropic Messages
 /// API and returns MCP CreateMessageResult(+WithTools).
-std::function<fastmcpp::Json(const fastmcpp::Json&)>
+FASTMCPP_API std::function<fastmcpp::Json(const fastmcpp::Json&)>
 create_anthropic_sampling_callback(AnthropicOptions options);
 
 } // namespace fastmcpp::client::sampling::handlers

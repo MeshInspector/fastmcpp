@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
@@ -58,7 +59,7 @@ struct Icon
 
 /// MCP Apps configuration metadata (FastMCP 3.x parity subset).
 /// This is serialized under `_meta.ui`.
-struct AppConfig
+struct FASTMCPP_API AppConfig
 {
     std::optional<std::string> resource_uri;
     std::optional<std::vector<std::string>> visibility;

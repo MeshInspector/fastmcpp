@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/middleware.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -20,7 +21,7 @@ namespace fastmcpp::server
 /// - icons: Optional list of icons for UI display
 /// - instructions: Optional instructions shown during initialize
 /// - strict_input_validation: Flag for input validation behavior (optional)
-class Server
+class FASTMCPP_API Server
 {
   public:
     using Handler = std::function<fastmcpp::Json(const fastmcpp::Json&)>;

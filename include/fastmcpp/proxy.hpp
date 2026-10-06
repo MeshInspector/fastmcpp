@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/client/client.hpp"
 #include "fastmcpp/prompts/manager.hpp"
@@ -36,7 +37,7 @@ namespace fastmcpp
 ///
 /// // Use make_mcp_handler(proxy) to get the MCP handler
 /// ```
-class ProxyApp
+class FASTMCPP_API ProxyApp
 {
   public:
     /// Client factory type - returns a connected client
@@ -199,14 +200,14 @@ class ProxyApp
 // Non-template overloads for common use cases (preferred for usability)
 
 /// Create proxy from URL string (lvalue or literal)
-ProxyApp create_proxy(const std::string& url, std::string name = "proxy",
+FASTMCPP_API ProxyApp create_proxy(const std::string& url, std::string name = "proxy",
                       std::string version = "1.0.0");
 
 /// Create proxy from string literal
-ProxyApp create_proxy(const char* url, std::string name = "proxy", std::string version = "1.0.0");
+FASTMCPP_API ProxyApp create_proxy(const char* url, std::string name = "proxy", std::string version = "1.0.0");
 
 /// Create proxy from existing Client (takes ownership)
-ProxyApp create_proxy(client::Client&& client, std::string name = "proxy",
+FASTMCPP_API ProxyApp create_proxy(client::Client&& client, std::string name = "proxy",
                       std::string version = "1.0.0");
 
 } // namespace fastmcpp

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/resources/resource.hpp"
 #include "fastmcpp/resources/template.hpp"
@@ -10,7 +11,7 @@
 namespace fastmcpp::resources
 {
 
-class ResourceManager
+class FASTMCPP_API ResourceManager
 {
   public:
     void register_resource(const Resource& res)

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/provider.hpp"
 
@@ -10,7 +11,7 @@
 namespace fastmcpp::providers
 {
 
-class OpenAPIProvider : public Provider
+class FASTMCPP_API OpenAPIProvider : public Provider
 {
   public:
     struct Options

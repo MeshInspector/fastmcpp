@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 /// @file tool_transform.hpp
 /// @brief Tool transformation system for fastmcpp (matching Python fastmcp)
 ///
@@ -21,7 +22,7 @@ namespace fastmcpp::tools
 {
 
 /// Configuration for transforming a single argument
-struct ArgTransform
+struct FASTMCPP_API ArgTransform
 {
     /// New name for the argument (if changing)
     std::optional<std::string> name;
@@ -226,7 +227,7 @@ create_transformed_tool(const Tool& parent, std::optional<std::string> new_name 
 }
 
 /// Configuration for applying transformations via JSON/config
-struct ToolTransformConfig
+struct FASTMCPP_API ToolTransformConfig
 {
     std::optional<std::string> name;
     std::optional<std::string> description;

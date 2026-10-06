@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 /// @file client/client.hpp
 /// @brief MCP Client implementation for fastmcpp
 /// @details Provides a full MCP client API matching Python fastmcp's Client class.
@@ -39,7 +40,7 @@ class ResourceTask;
 // ============================================================================
 
 /// Abstract transport interface for MCP communication
-class ITransport
+class FASTMCPP_CLASS ITransport
 {
   public:
     virtual ~ITransport() = default;
@@ -52,7 +53,7 @@ class ITransport
 };
 
 /// Optional transport interface: some transports support explicit session reset/disconnect.
-class IResettableTransport
+class FASTMCPP_CLASS IResettableTransport
 {
   public:
     virtual ~IResettableTransport() = default;
@@ -67,7 +68,7 @@ using ServerRequestHandler =
 
 /// Optional transport interface: some transports can accept server-initiated requests and send
 /// responses.
-class IServerRequestTransport
+class FASTMCPP_CLASS IServerRequestTransport
 {
   public:
     virtual ~IServerRequestTransport() = default;
@@ -75,7 +76,7 @@ class IServerRequestTransport
 };
 
 /// Optional transport interface: some transports expose MCP session IDs.
-class ISessionTransport
+class FASTMCPP_CLASS ISessionTransport
 {
   public:
     virtual ~ISessionTransport() = default;
@@ -84,7 +85,7 @@ class ISessionTransport
 };
 
 /// Loopback transport for in-process server testing
-class LoopbackTransport : public ITransport
+class FASTMCPP_CLASS LoopbackTransport : public ITransport
 {
   public:
     explicit LoopbackTransport(std::shared_ptr<fastmcpp::server::Server> server)
@@ -104,7 +105,7 @@ class LoopbackTransport : public ITransport
 /// In-process transport that uses an MCP handler function
 /// This is useful for proxy mode mounting where we want to communicate
 /// with a mounted app via its MCP handler
-class InProcessMcpTransport : public ITransport
+class FASTMCPP_API InProcessMcpTransport : public ITransport
 {
   public:
     using HandlerFn = std::function<fastmcpp::Json(const fastmcpp::Json&)>;
@@ -183,7 +184,7 @@ struct CallToolOptions
 /// opts.meta = {{"user_id", "123"}, {"trace_id", "abc"}};
 /// auto result = client.call_tool("my_tool", {{"arg1", "value"}}, opts);
 /// @endcode
-class Client
+class FASTMCPP_API Client
 {
     struct CallbackState;
 

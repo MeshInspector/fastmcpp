@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/local_provider.hpp"
 
@@ -11,7 +12,7 @@
 namespace fastmcpp::providers
 {
 
-class FileSystemProvider : public LocalProvider
+class FASTMCPP_API FileSystemProvider : public LocalProvider
 {
   public:
     explicit FileSystemProvider(std::filesystem::path root = ".", bool reload = false);

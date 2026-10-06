@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -16,7 +17,7 @@
 namespace fastmcpp::tools
 {
 
-class Tool
+class FASTMCPP_API Tool
 {
   public:
     using Fn = std::function<fastmcpp::Json(const fastmcpp::Json&)>;

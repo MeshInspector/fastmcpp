@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/transform.hpp"
 
@@ -15,7 +16,7 @@ namespace fastmcpp::providers::transforms
 /// bypass automatically.
 ///
 /// Parity with Python fastmcp CatalogTransform (commit 03673d9f).
-class CatalogTransform : public Transform
+class FASTMCPP_CLASS CatalogTransform : public Transform
 {
   public:
     CatalogTransform() = default;

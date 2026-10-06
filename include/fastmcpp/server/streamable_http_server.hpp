@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/session.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -38,7 +39,7 @@ namespace fastmcpp::server
  *
  * Reference: https://spec.modelcontextprotocol.io/specification/2025-03-26/basic/transports/
  */
-class StreamableHttpServerWrapper
+class FASTMCPP_API StreamableHttpServerWrapper
 {
   public:
     using McpHandler = std::function<fastmcpp::Json(const fastmcpp::Json&)>;

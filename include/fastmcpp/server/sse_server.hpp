@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/session.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -40,7 +41,7 @@ namespace fastmcpp::server
  * a JSON-RPC response (nlohmann::json). The make_mcp_handler() factory
  * functions in fastmcpp/mcp/handler.hpp produce compatible handlers.
  */
-class SseServerWrapper
+class FASTMCPP_API SseServerWrapper
 {
   public:
     using McpHandler = std::function<fastmcpp::Json(const fastmcpp::Json&)>;

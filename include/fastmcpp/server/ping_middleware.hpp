@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/server/middleware.hpp"
 #include "fastmcpp/types.hpp"
 
@@ -13,7 +14,7 @@ namespace fastmcpp::server
 /// Parity with Python fastmcp PingMiddleware.
 /// Note: simplified implementation — stores interval for future integration with
 /// session-based ping sending.
-class PingMiddleware
+class FASTMCPP_API PingMiddleware
 {
   public:
     explicit PingMiddleware(std::chrono::milliseconds interval = std::chrono::seconds(15));

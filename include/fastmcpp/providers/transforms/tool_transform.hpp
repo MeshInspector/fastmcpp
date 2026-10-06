@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 
 #include "fastmcpp/providers/transforms/transform.hpp"
 #include "fastmcpp/tools/tool_transform.hpp"
@@ -8,7 +9,7 @@
 namespace fastmcpp::providers::transforms
 {
 
-class ToolTransform : public Transform
+class FASTMCPP_API ToolTransform : public Transform
 {
   public:
     explicit ToolTransform(std::unordered_map<std::string, tools::ToolTransformConfig> transforms);

@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/prompts/prompt.hpp"
 #include "fastmcpp/resources/resource.hpp"
 #include "fastmcpp/server/elicitation.hpp"
@@ -178,7 +179,7 @@ using ProgressCallback =
     std::function<void(const std::string&, double, double, const std::string&)>;
 using NotificationCallback = std::function<void(const std::string&, const Json&)>;
 
-class Context
+class FASTMCPP_API Context
 {
   public:
     Context(const resources::ResourceManager& rm, const prompts::PromptManager& pm);

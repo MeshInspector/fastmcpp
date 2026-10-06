@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/exceptions.hpp"
 #include "fastmcpp/tools/tool.hpp"
 
@@ -8,7 +9,7 @@
 namespace fastmcpp::tools
 {
 
-class ToolManager
+class FASTMCPP_API ToolManager
 {
   public:
     void register_tool(const Tool& t)

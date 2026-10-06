@@ -1,4 +1,5 @@
 #pragma once
+#include "fastmcpp/export.hpp"
 #include "fastmcpp/types.hpp"
 
 #include <functional>
@@ -34,7 +35,7 @@ struct PromptResult
 };
 
 /// MCP Prompt definition
-struct Prompt
+struct FASTMCPP_API Prompt
 {
     std::string name;
     std::optional<std::string> version;

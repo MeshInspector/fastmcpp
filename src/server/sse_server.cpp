@@ -348,9 +348,9 @@ bool SseServerWrapper::start()
                   }
 
                   res.status = 200;
-                  // Content-Type and Transfer-Encoding come from set_chunked_content_provider below;
-                  // set_header("Content-Type") here too would send the header twice (httplib
-                  // headers are a multimap), which strict SSE clients reject.
+                  // Content-Type and Transfer-Encoding are set by set_chunked_content_provider
+                  // below; set_header("Content-Type") here too would send the header twice
+                  // (httplib headers are a multimap), which strict SSE clients reject.
                   res.set_header("Cache-Control", "no-cache, no-transform");
                   res.set_header("Connection", "keep-alive");
 

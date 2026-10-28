@@ -348,9 +348,9 @@ bool SseServerWrapper::start()
                   }
 
                   res.status = 200;
-                  // Note: Don't set Transfer-Encoding manually - set_chunked_content_provider
-                  // handles it
-                  res.set_header("Content-Type", "text/event-stream; charset=utf-8");
+                  // Content-Type and Transfer-Encoding are set by set_chunked_content_provider
+                  // below; set_header("Content-Type") here too would send the header twice
+                  // (httplib headers are a multimap), which strict SSE clients reject.
                   res.set_header("Cache-Control", "no-cache, no-transform");
                   res.set_header("Connection", "keep-alive");
 
@@ -359,7 +359,7 @@ bool SseServerWrapper::start()
                   res.set_header("X-Accel-Buffering", "no");
 
                   res.set_chunked_content_provider(
-                      "text/event-stream",
+                      "text/event-stream; charset=utf-8",
                       [this](size_t /*offset*/, httplib::DataSink& sink)
                       {
                           // Generate cryptographically secure session ID
